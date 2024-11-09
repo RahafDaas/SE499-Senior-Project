@@ -3,9 +3,8 @@
 ![PSUEATS-Logo](PSUlogo.jpeg)
 
 ## Introduction to PSUEats
-<<<<<<< HEAD
 
-- PSUEats is a food ordering and pickup platform designed to streamline the food-ordering experience within PSU community. The platform allows users to browse menus, add items to their carts, and place orders for pickup from a variety of restaurants. With a focus on security and personalization, PSUEats ensures that each user's data—such as cart contents and order history—is stored securely, while shop owners can manage their menus and track orders easily. With an Admin Dashboard to monitor users and shop owners and to download a report about the analysis. This project is developed for SE499 Senior Project by 5 female students at Prince Sultan University. By using this PSUEats website, the struggle, waist of time, and missing classes decreases.
+- PSUEats is a food ordering and pickup platform designed to streamline the food-ordering experience within the PSU community. The platform allows users to browse menus, add items to their carts, and place orders for pickup from various restaurants. With a focus on security and personalization, PSUEats ensures that each user's data—such as cart contents and order history—is stored securely. At the same time, shop owners can manage their menus and track orders easily. With an Admin Dashboard to monitor users and shop owners and to download a report about the analysis. This project is developed for the SE499 Senior Project by 5 female students at Prince Sultan University. Using this PSUEats website decreases the struggle, waste of time, and missing classes.
 
 ## Agile Scrum Framework in PSUEats Development
 
