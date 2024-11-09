@@ -3,6 +3,7 @@
 ![PSUEATS-Logo](PSUlogo.jpeg)
 
 ## Introduction to PSUEats
+<<<<<<< HEAD
 
 - PSUEats is a food ordering and pickup platform designed to streamline the food-ordering experience within PSU community. The platform allows users to browse menus, add items to their carts, and place orders for pickup from a variety of restaurants. With a focus on security and personalization, PSUEats ensures that each user's data—such as cart contents and order history—is stored securely, while shop owners can manage their menus and track orders easily. With an Admin Dashboard to monitor users and shop owners and to download a report about the analysis. This project is developed for SE499 Senior Project by 5 female students at Prince Sultan University. By using this PSUEats website, the struggle, waist of time, and missing classes decreases.
 
@@ -10,6 +11,13 @@
 
 - The development of PSUEats follows the Agile Scrum framework, a methodology that promotes adaptability and continuous improvement. Using Scrum allows the PSUEats team to work collaboratively through iterative sprints, focusing on incremental product enhancements. Each sprint includes essential processes like sprint planning, daily stand-ups, sprint reviews, and retrospectives, ensuring transparency, quick feedback cycles, and a user-centered approach to development.
 
+=======
+- PSUEats is a food ordering and pickup platform designed to streamline the food-ordering experience within the PSU community. The platform allows users to browse menus, add items to their carts, and place orders for pickup from various restaurants. With a focus on security and personalization, PSUEats ensures that each user's data—such as cart contents and order history—is stored securely. At the same time, shop owners can manage their menus and track orders easily. With an Admin Dashboard to monitor users and shop owners and to download a report about the analysis. This project is developed for the SE499 Senior Project by 5 female students at Prince Sultan University. Using this PSUEats website decreases the struggle, waste of time, and missing classes.
+
+## Agile Scrum Framework in PSUEats Development
+- The development of PSUEats follows the Agile Scrum framework, a methodology that promotes adaptability and continuous improvement. Using Scrum allows the PSUEats team to work collaboratively through iterative sprints, focusing on incremental product enhancements. Each sprint includes essential processes like sprint planning, daily stand-ups, sprint reviews, and retrospectives, ensuring transparency, quick feedback cycles, and a user-centered approach to development.
+  
+>>>>>>> 7c7bc3a15bf1aed8b074bda49d56b83bee037f80
 - By embracing Agile Scrum, the PSUEats team efficiently addresses evolving requirements, maintains a high level of quality in each release, and ensures that the platform meets the needs of both end-users and restaurant owners alike. This approach fosters continuous delivery, adaptability to user feedback, and an efficient response to changing requirements, allowing the project to grow dynamically.
 
 ## Key Technologies and Packages in PSUEats Development
@@ -51,5 +59,5 @@ These packages, along with the Agile Scrum framework, have enabled PSUEats to ev
 
 ## Supervised By
 
-- This Team and Project has been supervised by Dr. Zainab Masood at Prince Sultan University, for the SE499 Senior Project in first semester of 2024 semester number 241.
+- This Team and Project have been supervised by Dr. Zainab Masood at Prince Sultan University, for the SE499 Senior Project in the first semester of 2024 semester number 241.
 - [Dr. Zainab Masood] (https://github.com/zmasood)
