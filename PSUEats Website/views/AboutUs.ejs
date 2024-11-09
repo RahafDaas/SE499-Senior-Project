@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us</title>
+    <script src="https://kit.fontawesome.com/6991b496f2.js" crossorigin="anonymous"></script>
+    <script src="../server.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+
+
+        }
+
+        body {
+            height: 100vh;
+            width: 100%;
+            background-image: url(../images/background.JPG);
+            background-position: center;
+            background-size: cover;
+            position: relative;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background-color: #68add5;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: darkblue;
+            text-decoration: none;
+        }
+
+        .about-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 100px;
+            gap: 50px;
+        }
+
+        .about-content {
+            max-width: 50%;
+        }
+
+        .about-content h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: rgb(56, 56, 78);
+
+        }
+
+        .about-content p {
+            margin-bottom: 20px;
+            line-height: 1.6;
+            font-size: 18px;
+            color: #576b80;
+        }
+
+        .btn-primary {
+            padding: 12px 20px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+
+        .about-image {
+            max-width: 350px;
+            /* Set a max width for the image container */
+        }
+
+        .about-image img {
+            width: 100%;
+            /* Image fills the container */
+            border-radius: 10px;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            /* Prevent scrollbar */
+        }
+
+        .logo-container {
+            margin-left: auto;
+            margin-right: auto;
+            width: 100%;
+            overflow: hidden;
+            /* Hide overflowing content */
+            white-space: nowrap;
+            /* Keep logos in one line */
+            width: 900px;
+        }
+
+        .logo-scroller {
+            display: inline-block;
+            animation: scroll 20s linear infinite;
+            /* Animation for scrolling */
+        }
+
+        .logo-scroller img {
+            height: 100px;
+            /* Adjust logo size */
+            margin: 0 20px;
+            /* Space between logos */
+        }
+
+        @keyframes scroll {
+            from {
+                transform: translateX(100%);
+                /* Start off the right side */
+            }
+
+            to {
+                transform: translateX(-100%);
+                /* End off the left side */
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+
+    </header>
+
+    <section class="about-section">
+        <div class="about-image">
+            <img src="../images/PSUlogo-removebg-preview.png" alt="Illustration of a person working on a laptop">
+        </div>
+        <div class="about-content">
+            <h1>
+                <%=heading %>
+            </h1>
+            <p>
+                <%=description %>
+            </p>
+        </div>
+    </section>
+    <div class="logo-container">
+        <div class="logo-scroller">
+            <img src="../images/tosscafe.jpeg" alt="tosscafe">
+            <img src="../images/selu.jpg" alt="selu">
+            <img src="../images/saadeddin.jpg" alt="saadeddin">
+            <img src="../images/antik.jpg" alt="antik">
+            <img src="../images/pizza.jpg" alt="pizza">
+            <img src="../images/dofaa89.png" alt="dofaa89">
+            <img src="../images/calzey.jpg" alt="calzey">
+            <img src="../images/maitrechoux.jpeg" alt="maitrechoux">
+            <img src="../images/mini-market.jpg" alt="mini-market">
+        </div>
+    </div>
+</body>
+
+</html>

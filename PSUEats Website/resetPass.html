@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Password</title>
+    <link rel="stylesheet" href="resetPassStyles.css">
+</head>
+
+<body>
+    <div class="container">
+        <h2>Reset Password</h2>
+        <!-- Phone Number Form -->
+        <div id="phone-section">
+            <label for="phone-number">Enter your Phone Number:</label>
+            <input type="text" id="phone-number" placeholder="+1234567890">
+            <button id="send-otp-btn">Send OTP</button>
+        </div>
+
+        <!-- OTP Verification Form -->
+        <div id="otp-section" style="display: none;">
+            <label for="otp-code">Enter the OTP sent to your phone:</label>
+            <input type="text" id="otp-code" placeholder="123456">
+            <button id="verify-otp-btn">Verify OTP</button>
+        </div>
+
+        <!-- Reset Password Form -->
+        <div id="reset-password-section" style="display: none;">
+            <label for="new-password">Enter New Password:</label>
+            <input type="password" id="new-password" placeholder="New Password">
+            <label for="confirm-password">Confirm New Password:</label>
+            <input type="password" id="confirm-password" placeholder="Confirm Password">
+            <button id="reset-password-btn">Reset Password</button>
+        </div>
+
+        <p id="message"></p>
+    </div>
+    <script src="resetPassScript.js"></script>
+</body>
+
+</html>

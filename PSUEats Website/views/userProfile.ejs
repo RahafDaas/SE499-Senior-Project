@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- general meta tags -->
+  <meta charset="utf-8">
+  <meta name="author" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- site specific tags -->
+  <title>My Profile</title>
+  <script src="https://kit.fontawesome.com/6991b496f2.js" crossorigin="anonymous"></script>
+  <script src="../server.js"></script>
+
+
+</head>
+
+<body>
+
+  <div class="profileContainer">
+    <h1 id="profileFormHead">Edit Your Profile</h1>
+    <form id="Profile-form" action="/updateUser-profile" method="POST">
+
+      <div class="ProfileInputFields" id="Username">
+        <input type="text" name="name" value="<%= user.name %>" placeholder="Name" id="name" required>
+        <small class="description">Your Name</small>
+      </div>
+      <div class="ProfileInputFields" id="PhoneNum">
+
+        <input type="tel" name="phoneNum" value="<%= user.phoneNum %>" placeholder="Phone" id="phoneNum" required>
+        <small class="description">Your Phone Number</small>
+      </div>
+
+      <div class="ProfileInputFields" id="Email">
+
+        <input type="Email" name="Email" value="<%= user.email %>" placeholder="Email" id="Email" required>
+        <small class="description">Your Email</small>
+      </div>
+
+      <div class="profileEdit_btn">
+        <button type="submit" id="saveBtn" onclick="confirmSave()">Save</button>
+        <button id="cancelBtn" class="disallow" type="button" onclick="return CancelSave() ">Cancel</button>
+      </div>
+    </form>
+
+  </div>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+        "Lucida Sans", Arial, sans-serif;
+      box-sizing: border-box;
+    }
+
+    label {
+      color: darkblue;
+      font-size: 12px;
+      margin-left: 0;
+    }
+
+    .profileContainer {
+      width: 100%;
+      height: 100vh;
+      background-image: linear-gradient(rgba(0, 0, 50, 0.8), rgba(0, 0, 50, 0.8)),
+        url(images/psu.jpg);
+      background-position: center;
+      background-size: cover;
+      position: relative;
+    }
+
+    #profileFormHead {
+      text-align: center;
+      color: aliceblue;
+      padding-top: 20px;
+    }
+
+    #Profile-form {
+      width: 90%;
+      max-width: 450px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 30px 60px 50px;
+      text-align: center;
+      border-radius: 20px;
+      margin-top: 10px;
+    }
+
+    .ProfileInputFields {
+      background: lightgray;
+      margin: 15px 0;
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      max-height: 65px;
+      overflow: hidden;
+      border-radius: 40px;
+    }
+
+    input {
+      width: 100%;
+      background: transparent;
+      border: 0;
+      outline: 0;
+      padding: 18px 15px;
+    }
+
+    .ProfileInputFields i {
+      margin-left: 15px;
+      color: grey;
+    }
+
+    small {
+      font-size: 10px;
+      color: gray;
+      margin-right: 10px;
+      text-wrap: nowrap;
+
+    }
+
+    .profileEdit_btn {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      margin-top: 3%;
+    }
+
+    .profileEdit_btn button {
+      flex-basis: 47%;
+      background: darkblue;
+      color: white;
+      height: 40px;
+      border-radius: 20px;
+      border: 0;
+      outline: 0;
+      cursor: pointer;
+      transition: background 1s;
+      margin-top: 25%;
+    }
+
+    .ProfileInputSet {
+      height: 240px;
+    }
+
+    .profileEdit_btn button.disallow {
+      background: lightgray;
+      color: gray;
+    }
+  </style>
+
+
+  <script>
+    const saveBtn = document.getElementById("saveBtn")
+    const cancelBtn = document.getElementById("cancelBtn")
+
+    function confirmSave() {
+      const confirmed = confirm("Are you sure you want to save these changes?");
+      if (confirmed) {
+        // Redirect to the home page
+        window.location.href = "UserHomepage.html";
+        return false; // Prevent form submission
+      }
+      return false; // Prevent form submission if canceled
+    }
+    function CancelSave() {
+      const canceled = confirm("Do you want to discard these changes?");
+      if (canceled) {
+        // Redirect to the home page 
+        window.location.href = "UserHomepage.html";
+        return false; // Prevent form submission
+      }
+      return false; // Prevent form submission if canceled
+    }
+
+  </script>
+</body>
+
+</html>

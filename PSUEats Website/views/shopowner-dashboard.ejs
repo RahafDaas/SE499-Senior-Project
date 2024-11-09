@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop Owner Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/6991b496f2.js" crossorigin="anonymous"></script>
+
+    <style>
+        html,
+        body {
+            background-color: #f9f9f9;
+            font-family: Arial, sans-serif;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: #004080;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav {
+            display: flex;
+            gap: 20px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            background-color: #48535f;
+            transition: background-color 0.3s;
+        }
+
+        nav a:hover {
+            background-color: darkorange;
+        }
+
+        .container {
+            flex: 1;
+            padding-bottom: 60px;
+            overflow-y: auto;
+        }
+
+        .shop-owner-panel {
+            padding: 20px;
+            border-radius: 10px;
+            overflow: auto;
+        }
+
+        .shop-owner-panel h2 {
+            color: white;
+            font-size: 18px;
+            text-align: center;
+            background-color: #8c9aa8;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .table-container {
+            max-height: 400px;
+            /* Set the maximum height of the container */
+            overflow-y: auto;
+            /* Enable vertical scrolling */
+            border: 1px solid #ccc;
+            /* Optional: add a border for better visibility */
+            margin-bottom: 50px;
+        }
+
+        table {
+            width: 100%;
+            /* Make the table take the full width of the container */
+            border-collapse: collapse;
+            /* Collapse borders for a cleaner look */
+        }
+
+
+
+
+        table thead {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        table th,
+        table td {
+            padding: 8px;
+            font-size: 14px;
+            text-align: center;
+            border: 1pt solid #909396;
+        }
+
+        table tbody tr {
+            background-color: #f2f2f2;
+        }
+
+        table tbody tr:nth-child(even) {
+            background-color: #e9e9e9;
+        }
+
+        table tbody tr:hover {
+            background-color: #d1ecf1;
+        }
+
+        table tbody td button {
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            border: none;
+            color: white;
+            background-color: #007bff;
+            transition: background-color 0.3s;
+        }
+
+        table tbody td button.reject {
+            background-color: #dc3545;
+        }
+
+        table tbody td button:hover {
+            background-color: #0056b3;
+        }
+
+        table tbody td button.reject:hover {
+            background-color: #ff0000;
+        }
+
+        .analytics-section {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .analytics-section label {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .analytics-section select,
+        .analytics-section input[type="date"] {
+            margin: 10px 0;
+            padding: 10px;
+            width: 100%;
+            max-width: 300px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .analytics-section button {
+            margin-top: 15px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .analytics-section button:hover {
+            background-color: #218838;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .accept-btn {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .accept-btn:hover {
+            background-color: #218838;
+        }
+
+        .cancel-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .cancel-btn:hover {
+            background-color: #c82333;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+
+        @media (max-width: 768px) {
+            table {
+                font-size: 12px;
+                overflow-x: auto;
+            }
+
+            .analytics-section {
+                padding: 10px;
+            }
+
+            .analytics-section select,
+            .analytics-section input[type="date"] {
+                max-width: 100%;
+            }
+        }
+
+        .status-btn,
+        .delete-btn {
+            padding: 8px 16px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Style the "Update Status" button */
+        .status-btn.update-status {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .status-btn.update-status:hover {
+            opacity: 0.8;
+        }
+
+        /* Style the "Delete" button */
+        .delete-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .delete-btn:hover {
+            opacity: 0.8;
+        }
+
+        /* Ensure the buttons appear side by side */
+        form {
+            display: inline-block;
+            margin-right: 5px;
+            /* Optional: Adjust the spacing between buttons */
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>PSUEats</h1>
+        <nav>
+
+            <button onclick="window.location.href='ownerProfile';">Profile</button>
+
+            <a href="/logout">Logout</a>
+
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="shop-owner-panel">
+
+            <h2>Orders Management</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>User Email</th>
+                            <th>Dish Name</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Payment Status</th>
+                            <th>Order Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (orders && orders.length> 0) { %>
+                            <% orders.forEach(order=> { %>
+                                <% order.orders.forEach(item=> { %>
+                                    <% if (item.shopName===name) { %>
+                                        <!-- Ensure the item belongs to the current shop -->
+                                        <tr>
+                                            <td>
+                                                <%= order._id %>
+                                            </td>
+                                            <td>
+                                                <%= order.email %>
+                                            </td>
+                                            <td>
+                                                <%= item.dishName %>
+                                            </td>
+                                            <td>
+                                                <%= item.price %>
+                                            </td>
+                                            <td>
+                                                <%= item.quantity %>
+                                            </td>
+                                            <td>
+                                                <%= order.paymentStatus %>
+                                            </td>
+                                            <td>
+                                                <!-- Update Status Form -->
+                                                <form action="/update-order-status" method="POST"
+                                                    style="display:inline;">
+                                                    <select name="orderStatus">
+                                                        <option value="Pending" <%=order.orderStatus==='Pending'
+                                                            ? 'selected' : '' %>>Pending</option>
+                                                        <option value="Confirmed" <%=order.orderStatus==='Confirmed'
+                                                            ? 'selected' : '' %>>Confirmed</option>
+                                                        <option value="Processing" <%=order.orderStatus==='Processing'
+                                                            ? 'selected' : '' %>>Processing</option>
+                                                        <option value="Ready" <%=order.orderStatus==='Ready'
+                                                            ? 'selected' : '' %>>Ready</option>
+                                                        <option value="Picked Up" <%=order.orderStatus==='Picked Up'
+                                                            ? 'selected' : '' %>>Picked Up</option>
+                                                        <option value="Rejected" <%=order.orderStatus==='Rejected'
+                                                            ? 'selected' : '' %>>Rejected</option>
+                                                    </select>
+                                                    <input type="hidden" name="orderId" value="<%= order._id %>" />
+                                                    <button type="submit" class="status-btn update-status">Update
+                                                        Status</button>
+                                                </form>
+
+                                                <!-- Delete Button Form -->
+                                                <form action="/delete-order" method="POST" style="display:inline;">
+                                                    <input type="hidden" name="orderId" value="<%= order._id %>" />
+                                                    <button type="submit" class="delete-btn"
+                                                        onclick="return confirm('Are you sure you want to delete this order?')">Delete</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                        <% } %>
+                                            <% }) %>
+                                                <% }) %>
+                                                    <% } else { %>
+                                                        <tr>
+                                                            <td colspan="7">No orders available for your shop.</td>
+                                                        </tr>
+                                                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+
+
+            <h2>Menu Items</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Dish Picture</th>
+                            <th>Dish Name</th>
+                            <th>Price</th>
+                            <th>Calories</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (typeof foodItems !=='undefined' && foodItems.length> 0) { %>
+                            <% foodItems.forEach(item=> { %>
+                                <tr>
+                                    <form action="/modify-food-item" method="POST" enctype="multipart/form-data">
+                                        <td><img src="<%= item.dishPic %>" alt="Dish Image"
+                                                style="width: 100px; height: auto;">
+                                            <input type="file" class="updateImage" name="dishPic">
+                                        </td>
+
+                                        <!-- Hidden input to store the original dish name -->
+                                        <input type="hidden" name="originalDishname" value="<%= item.dishname %>">
+
+                                        <td><input type="text" name="dishname" value="<%= item.dishname %>"></td>
+                                        <td><input type="text" name="price" value="<%= item.price %>"></td>
+                                        <td><input type="text" name="calories" value="<%= item.calories %>"></td>
+
+                                        <!-- Update and Delete buttons -->
+                                        <td>
+                                            <button type="submit" name="action" value="update">Update</button>
+                                            <button type="submit" name="action" value="delete"
+                                                style="background-color: red; "
+                                                onclick="return confirm('Are you sure you want to delete this item?')">Delete</button>
+                                        </td>
+                                    </form>
+                                </tr>
+                                <% }) %>
+                                    <% } else { %>
+                                        <tr>
+                                            <td colspan="5">No food items available or foodItems not defined.</td>
+                                        </tr>
+                                        <% } %>
+
+
+                    </tbody>
+                </table>
+            </div>
+            <script>
+                document.querySelectorAll('input[type="file"]').forEach(input => {
+                    input.addEventListener('change', function (event) {
+                        const file = event.target.files[0];
+                        if (file) {
+                            const reader = new FileReader();
+                            reader.onload = function (e) {
+                                // Display the new image in the existing img tag for preview
+                                const previewImg = event.target.previousElementSibling;
+                                previewImg.src = e.target.result;
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    });
+                });
+            </script>
+
+
+
+        </div>
+    </div>
+
+</body>
+
+</html>

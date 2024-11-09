@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- general meta tags -->
+    <meta charset="utf-8">
+    <meta name="author" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- site specific tags -->
+    <title>PSUEats Shop Owner Login</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/6991b496f2.js" crossorigin="anonymous"></script>
+    <script src="script.js"></script>
+    <style>
+        .field_btn {
+            display: flex;
+            /* Use flexbox to align items */
+            justify-content: center;
+            /* Center items horizontally */
+            margin-top: 20px;
+            /* Add some space above the button */
+        }
+
+        /* Optional: Style for the button */
+        #login_btn {
+            padding: 10px 20px;
+            /* Add some padding to the button */
+            font-size: 16px;
+            /* Adjust font size */
+            cursor: pointer;
+            /* Change cursor to pointer on hover */
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <div class="container">
+        <div class="Login_form">
+            <h1 id="FormHead">Shop Owner Login</h1>
+            <div id="error"></div>
+            <form id="form" action="/shopowner-login" method="POST">
+                <div class="inputSet" style=" height: 140px;">
+                    <div class="inputFields" id="PhoneNum">
+                        <i class="fa-solid fa-phone"></i>
+                        <i class="fa-regular fa-circle-check" id="correctPhoneIcon" style="display: none;"></i>
+                        <i class="fa-regular fa-circle-xmark" id="wrongPhoneIcon" style="display: none;"></i>
+                        <input type="tel" name="phoneNum" placeholder="Phone Number" id="phoneNum"
+                            onkeyup="phoneValidation()" required>
+                        <span id="phoneError" class="errorMseg"></span>
+                    </div>
+
+                    <div class="inputFields" id="Password">
+                        <i class="fa-solid fa-lock"></i>
+                        <i class="fa-regular fa-circle-check" id="correctPassIcon" style="display: none;"></i>
+                        <i class="fa-regular fa-circle-xmark" id="wrongPassIcon" style="display: none;"></i>
+                        <input type="password" name="password" placeholder="Password" id="password"
+                            onkeyup="passValidation()" required>
+                        <span id="passwordError" class="errorMseg"></span>
+                    </div>
+                </div>
+
+                <p class="resetPass" id="passReset">Forgot Password? <a href="#">Reset Here</a></p>
+                <p class="shopownerSignup" id="shopownerSignup" style="display:block;">Don't have an account? <a
+                        href="shopowner-signup.html">Signup as a Shop Owner</a></p>
+                <p class="adminLogin" id="adminLogin">Admin? <a href="adminLogin.html">Login here</a></p>
+                <p class="userSignup" id="userSignup" style="display:block;">Not a Shop Owner? <a
+                        href="index.html">Login as User</a></p>
+
+                <div class="field_btn">
+                    <button type="submit" id="login_btn">Log In</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Form validation script placeholders
+        function phoneValidation() {
+            // Implement phone validation logic here
+        }
+
+        function passValidation() {
+            // Implement password validation logic here
+        }
+    </script>
+    <script src="script.js"></script>
+</body>
+
+</html>

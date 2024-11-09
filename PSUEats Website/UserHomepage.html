@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="author" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PSUEats</title>
+    <script src="https://kit.fontawesome.com/6991b496f2.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="styleforUserHomepage.css">
+    <style>
+        .main-header {
+            display: flex;
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        body {
+            overflow-x: hidden;
+        }
+
+        .main-menus {
+            width: 100%;
+            height: auto;
+            margin-right: 20px;
+        }
+
+        h4 {
+            font-size: larger;
+        }
+
+        p {
+            font-size: large;
+        }
+
+        #restaurant-list img {
+            height: 200px;
+            width: 200px;
+            margin: 10px auto;
+            box-shadow: 4px 4px 8px rgba(190, 190, 190, 0.8);
+        }
+
+        .highlight-wrapper {
+            display: flex;
+            overflow-x: auto;
+            max-height: 300px;
+            padding: 1rem;
+            gap: 1rem;
+        }
+
+        .highlight-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 250px;
+            padding: 1%;
+            border-radius: 8px;
+            background-color: white;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+
+        .highlight-card:hover {
+            transform: scale(1.05);
+        }
+
+        #restaurant-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            justify-content: center;
+            gap: 2%;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        footer {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .cart-icon {
+            position: relative;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .cart-icon span {
+            position: absolute;
+            top: -5px;
+            right: -10px;
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        @media screen and (max-width: 1368px) {
+            .highlight-card {
+                min-width: 100px;
+            }
+
+            #restaurant-list img {
+                height: 150px;
+                width: 150px;
+            }
+
+            .main-menus {
+                width: 90%;
+                margin: 5px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="sidebar">
+        <h1 class="logo">PSUEats</h1>
+        <div class="sidebar-menu">
+            <a href="#"><i class="fa-solid fa-house"></i> Home</a>
+            <a href="#"><i class="fa-solid fa-clock"></i> My Orders</a>
+            <a href="AboutUs"><i class="fa-solid fa-circle-info"></i> About Us</a>
+
+            <a href="#"><i class="fa-solid fa-gear"></i> Settings</a>
+        </div>
+        <div class="sidebar-logout">
+            <a href="/Logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="main-navbar">
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search by restaurant title">
+                <button class="searchbar-btn" onclick="searchRestaurants()">Search</button>
+            </div>
+            <div class="userProfile">
+                <div class="cart-icon" onclick="viewCart()">
+                    🛒 <span id="cartCount">0</span>
+                </div>
+                <button class="user" onclick="window.location.href='userProfile';"><i class="fa-solid fa-user"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="main-highlight">
+            <div class="main-header">
+                <h2 class="main-title">Our Recommendations</h2>
+                <div class="highlight-wrapper" id="recommendation-list">
+                    <!-- Recommendations will be dynamically inserted -->
+                </div>
+            </div>
+        </div>
+
+        <div class="main-menus">
+            <div class="main-detail">
+                <h2 class="main-title">Discover More</h2>
+                <div class="detail-wrapper" id="restaurant-list">
+                    <!-- Restaurant data will be dynamically inserted -->
+                </div>
+            </div>
+        </div>
+        <footer>
+            &copy; 2024 PSUEATS. All rights reserved.
+        </footer>
+
+        <script>
+            let allRestaurants = [];
+            let cart = JSON.parse(localStorage.getItem('cart')) || {}; // Load cart from localStorage
+            let currentRestaurantCode = ''; // Store the current restaurant code
+
+
+            // Fetch restaurants and store them globally
+            async function fetchRestaurants() {
+                try {
+                    const response = await fetch('/get-restaurants');
+                    if (!response.ok) throw new Error('Failed to fetch restaurants');
+                    allRestaurants = await response.json();
+                    displayRestaurants(allRestaurants);
+                } catch (error) {
+                    console.error("Error fetching restaurants:", error);
+                }
+            }
+
+            // Display restaurant cards dynamically
+            function displayRestaurants(restaurants) {
+                const restaurantListContainer = document.getElementById('restaurant-list');
+                restaurantListContainer.innerHTML = '';
+
+                restaurants.forEach(restaurant => {
+                    const restaurantCard = document.createElement('div');
+                    restaurantCard.className = 'highlight-card';
+                    restaurantCard.setAttribute('data-code', restaurant.code);
+
+                    restaurantCard.innerHTML = `
+                <img src="${restaurant.logoUrl}" alt="${restaurant.title}">
+                <div>
+                    <h4>${restaurant.title}</h4>
+                    <p>${restaurant.location}</p>
+                    <p>Open: ${restaurant.isOpen ? 'Yes' : 'No'}</p>
+                    <p>Rating: ${restaurant.rating} (${restaurant.ratingCount} reviews)</p>
+                </div>
+            `;
+
+                    // Redirect to specific restaurant page on click
+                    restaurantCard.addEventListener('click', () => {
+                        switch (restaurant.code) {
+                            case 'Selu-101':
+                                window.location.href = 'Selu.html';
+                                break;
+                            case 'Saadeddin-101':
+                                window.location.href = 'Saadedin.html';
+                                break;
+                            case 'Antik-101':
+                                window.location.href = 'Antik.html';
+                                break;
+                            case 'Toss-101':
+                                window.location.href = 'Toss.html';
+                                break;
+                            case 'Dofaa-101':
+                                window.location.href = 'Dofaa.html';
+                                break;
+                            case 'Pizza-101':
+                                window.location.href = 'pizza.html';
+                                break;
+                            case 'MiniMarket-101':
+                                window.location.href = 'MiniMarket.html';
+                                break;
+                            case 'Calzey-101':
+                                window.location.href = 'Calzey.html';
+                                break;
+                            case 'Maitre-101':
+                                window.location.href = 'Maitre.html';
+                                break;
+                            case 'SoMatcha-101':
+                                window.location.href = 'somatcha.html';
+                                break;
+                            default:
+                                alert('Page for ${ restaurant.title } is not available yet.');
+                        }
+                    });
+
+                    restaurantListContainer.appendChild(restaurantCard);
+                });
+            }
+
+            // Search functionality for restaurants
+            function searchRestaurants() {
+                const searchInput = document.getElementById('searchInput').value.toLowerCase();
+                const filteredRestaurants = allRestaurants.filter(restaurant =>
+                    restaurant.title.toLowerCase().includes(searchInput)
+                );
+                displayRestaurants(filteredRestaurants);
+            }
+
+            // Add to cart with restaurant restriction
+            function addToCart(name, image, price, code) {
+                if (!currentRestaurantCode) {
+                    currentRestaurantCode = code; // Set the restaurant code on the first addition
+                }
+
+                if (currentRestaurantCode !== code) {
+                    alert(`You can only add items from ${allRestaurants.find(r => r.code === currentRestaurantCode).title}.`);
+                    return; // Prevent adding items from a different restaurant
+                }
+
+                cart[name] = cart[name] ? cart[name] + 1 : 1;
+                localStorage.setItem('cart', JSON.stringify(cart));
+                updateCartCount();
+                saveCartToDatabase(name, image, price, code);
+            }
+
+
+            async function saveCartToDatabase(name, image, price, code) {
+                const response = await fetch('/add-to-cart', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, image, price, quantity: cart[name], restaurantCode: code })
+                });
+                if (!response.ok) {
+                    console.error('Failed to save cart item to database');
+                }
+            }
+
+            function updateCart() {
+                const cartCount = Object.values(cart).reduce((sum, qty) => sum + qty, 0);
+                document.getElementById('cartCount').textContent = cartCount;
+            }
+
+            function viewCart() {
+                window.location.href = 'cart.html';
+            }
+            // Fetch and display restaurants on page load
+            window.onload = () => {
+                fetchRestaurants();
+                updateCart(); // Sync cart on page load
+            };
+        </script>
+    </div>
+</body>
+
+</html>

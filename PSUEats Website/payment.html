@@ -1,0 +1,57 @@
+<!-- Payment Page (payment.html) -->
+<form id="payment-form">
+    <div id="card-element"></div> <!-- Stripe Card Element -->
+    <button id="submit">Pay Now</button>
+</form>
+
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    const stripe = Stripe('your_stripe_publishable_key'); // Use your actual Stripe publishable key
+    const elements = stripe.elements();
+    const card = elements.create('card');
+    card.mount('#card-element');
+
+    document.getElementById('payment-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // Get the order ID and client secret from the server (assuming it's stored in a hidden field or passed as data)
+        const clientSecret = "client_secret_from_server"; // Replace with actual client secret
+        const orderId = "order_id_from_server"; // Replace with actual order ID
+
+        // Confirm the payment with Stripe
+        const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+            payment_method: {
+                card: card,
+                billing_details: {
+                    name: 'User Name',
+                    email: 'user@example.com',
+                },
+            },
+        });
+
+        if (error) {
+            console.error("Payment failed:", error);
+            alert("Payment failed: " + error.message);
+        } else {
+            if (paymentIntent.status === 'succeeded') {
+                // Payment succeeded, update the order status to "Paid"
+                fetch('/update-order-status', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        orderId: orderId,
+                        paymentStatus: 'Paid',
+                    }),
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert("Payment successful! Your order is confirmed.");
+                        window.location.href = '/order-confirmation.html'; // Redirect to order confirmation page
+                    })
+                    .catch(error => console.error("Error updating order status:", error));
+            }
+        }
+    });
+</script>

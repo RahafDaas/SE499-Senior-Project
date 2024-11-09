@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation</title>
+    <style>
+        /* Global styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background-color: #f8f9fa;
+        }
+
+        h1,
+        h2 {
+            color: #ffffff;
+        }
+
+        header {
+            height: 90px;
+        }
+
+        .order-container {
+            width: 90%;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .order-header {
+            text-align: center;
+
+        }
+
+        .order-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .order-info p {
+            margin: 10px 0;
+            font-size: 16px;
+        }
+
+        .order-items {
+            margin-top: 20px;
+        }
+
+        .order-items ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .order-items li {
+            padding: 10px;
+            background-color: #f1f1f1;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+
+        .status-actions {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        #update-status-btn {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #update-status-btn:hover {
+            background-color: #0056b3;
+        }
+
+        /* Mobile-first responsive design */
+        @media (max-width: 600px) {
+            .order-container {
+                padding: 15px;
+            }
+
+            .order-info p {
+                font-size: 14px;
+            }
+
+            #update-status-btn {
+                width: 100%;
+            }
+        }
+
+        header {
+            background-color: #1d3557;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            /* Allows wrapping on smaller screens */
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            margin: 0;
+            flex: 1;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        nav a:first-child {
+            background-color: #efb300;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            color: white;
+            text-decoration: none;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            font-size: 1rem;
+        }
+
+        nav a:nth-child(2) {
+            background-color: #d80000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            color: white;
+            text-decoration: none;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            font-size: 1rem;
+        }
+
+
+
+        .cart-icon {
+            position: relative;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .cart-icon span {
+            position: absolute;
+            top: -5px;
+            right: -10px;
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Order Confirmation</h1>
+        <nav>
+            <a href="/home">Home</a>
+            <a href="/logout">Logout</a>
+            <div class="cart-icon" onclick="viewCart()">
+                🛒 <span id="cartCount">0</span>
+            </div>
+
+        </nav>
+    </header>
+    <div class="order-container">
+        <div class="order-header">
+            <h1 style="color: #1d3557  !important;">Order Confirmation</h1>
+        </div>
+
+        <div class="order-details">
+            <div class="order-info">
+                <p><strong>Order ID:</strong> <span id="order-id">
+                        <%= order._id %>
+                    </span></p>
+                <p><strong>Order Status:</strong> <span id="order-status">
+                        <%= order.orderStatus %>
+                    </span></p>
+                <p><strong>Pickup Time:</strong> <span id="pickup-time">
+                        <%= order.pickupTime %>
+                    </span></p>
+                <p><strong>Total Price:</strong> $<span id="total-price">
+                        <%= order.totalPrice %>
+                    </span></p>
+                <p><strong>Payment Method:</strong> <span id="payment-method">
+                        <%= order.paymentMethod %>
+                    </span></p>
+                <p><strong>Payment Status:</strong> <span id="payment-status">
+                        <%= order.paymentStatus %>
+                    </span></p>
+            </div>
+
+            <div class="order-items">
+                <h2>Items</h2>
+                <ul id="order-items-list">
+                    <% order.orders.forEach(item=> { %>
+                        <li>
+                            <%= item.dishName %> - $<%= item.price %> x <%= item.quantity %>
+                        </li>
+                        <li>
+                            Shop Name: <%= item.shopName %>
+                        </li>
+                        <% }) %>
+                </ul>
+            </div>
+        </div>
+
+        <div class="status-actions">
+            <form action="/update-status/<%= order._id %>" method="POST">
+                <button type="submit" id="update-status-btn">Update Status</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Clear local storage
+        localStorage.clear();
+    </script>
+</body>
+
+</html>

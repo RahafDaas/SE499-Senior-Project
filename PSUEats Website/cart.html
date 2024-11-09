@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap">
+    <style>
+        .loader {
+            display: none;
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2rem;
+            color: #1d3557;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f3f4f6;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #1d3557;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        header h1 {
+            margin: 0;
+            font-weight: 500;
+            font-size: 1.8rem;
+            flex-grow: 1;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-buttons a {
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            color: white;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+        .nav-buttons a:first-child {
+            background-color: #efb300;
+        }
+
+        .nav-buttons a:last-child {
+            background-color: #d80000;
+        }
+
+        .nav-buttons a:first-child:hover {
+            background-color: #c19104;
+        }
+
+        .nav-buttons a:last-child:hover {
+            background-color: #c10303;
+        }
+
+        .container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        th,
+        td {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #1d3557;
+            color: white;
+            font-weight: 500;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .dish-pic {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        .delete-button {
+            background-color: #e63946;
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+
+        .delete-button:hover {
+            background-color: #a70d0d;
+        }
+
+        .total {
+            text-align: right;
+            margin-top: 10px;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .center-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+            padding: 20px;
+            width: 100%;
+            margin: 20px auto;
+        }
+
+        #checkout-button {
+            background-color: #1d3557;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: background-color 0.3s, transform 0.2s;
+            animation: pulse 1.5s infinite;
+        }
+
+        #checkout-button:hover {
+            background-color: #162b40;
+            transform: scale(1.05);
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(29, 53, 87, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 10px 20px rgba(29, 53, 87, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(29, 53, 87, 0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                font-size: 0.8rem;
+            }
+
+            html {
+                font-size: 0.8rem;
+
+            }
+
+            header {
+                font-size: 0.8rem;
+                width: auto
+            }
+
+            button {
+                font-size: 0.8rem;
+
+            }
+
+            table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+                font-size: 0.7rem;
+                width: auto;
+            }
+
+            .pickup-schedule {
+                display: block;
+                overflow-x: auto;
+            }
+
+            th,
+            td {
+                min-width: 75px;
+                /* Set a minimum width for table cells */
+            }
+
+
+            .dish-pic {
+                width: 50px;
+                height: 50px;
+            }
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+
+        .button-container button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .confirm-yes {
+            background-color: #1d3557;
+            color: white;
+        }
+
+        .confirm-yes:hover {
+            background-color: #162b40;
+        }
+
+        .confirm-no {
+            background-color: #e63946;
+            color: white;
+        }
+
+        .confirm-no:hover {
+            background-color: #a70d0d;
+        }
+
+        .error-message {
+            color: #e63946;
+            display: none;
+            /* Initially hidden */
+            margin-top: 10px;
+        }
+
+        .success-message {
+            color: #1d8e1d;
+            display: none;
+            /* Initially hidden */
+            margin-top: 10px;
+        }
+
+        /* Add responsive styles for the pickup scheduling input */
+        .pickup-schedule {
+            margin-top: 40px;
+            padding: 15px;
+            background-color: #f9fafb;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pickup-schedule label {
+            font-weight: 500;
+            color: #1d3557;
+            font-size: 1.1rem;
+        }
+
+        .pickup-schedule input {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .pickup-schedule input:focus {
+            border-color: #1d3557;
+            box-shadow: 0 0 5px rgba(29, 53, 87, 0.3);
+        }
+
+        /* Center checkout button and error messages */
+        .manageLayoutOfError {
+            text-align: center;
+            /* Center the button and error message */
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column-reverse;
+            width: 50%;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Your Cart</h1>
+        <div class="nav-buttons">
+            <a href="/home">Home</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Dish Name</th>
+                    <th>Shop Name</th>
+                    <th>Price (SR)</th>
+                    <th>Quantity</th>
+                    <th>Total (SR)</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="cart-items">
+                <!-- Cart items will be dynamically inserted here -->
+            </tbody>
+        </table>
+        <div class="total" id="total-price">Total Price: 0 SR</div>
+        <div class="center-content">
+            <label for="payment-method">Choose Payment Method:</label>
+            <select id="payment-method">
+                <option value="pay on pick up">Pay on Pick Up</option>
+                <option value="online">Online</option>
+            </select>
+        </div>
+
+        <!-- Scheduling Pickup Time -->
+        <div class="pickup-schedule">
+            <label for="pickup-time">⏰ Schedule Pickup Time:</label>
+            <input type="datetime-local" id="pickup-time" name="pickup-time" required>
+        </div>
+        <div class="center-content">
+            <div class="manageLayoutOfError">
+                <button id="checkout-button">Checkout</button> <!-- New checkout button -->
+
+                <!-- Error message span -->
+                <span id="error-message" class="error-message"></span>
+                <span id="success-message" class="success-message"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for confirmation -->
+    <div id="confirmation-modal" class="modal">
+        <div class="modal-content">
+            <p>Do you want to proceed to payment or edit your cart?</p>
+            <div class="button-container">
+                <button id="confirm-yes" class="confirm-yes">Yes</button>
+                <button id="confirm-no" class="confirm-no">Cancel</button>
+            </div>
+            <span id="modal-error-message" class="error-message"></span>
+        </div>
+    </div>
+
+    <script>
+        const pickupInput = document.getElementById('pickup-time');
+        const loader = document.getElementById('loader');
+
+        function setMinMaxTime() {
+            const selectedDate = new Date().toISOString().split("T")[0];
+            pickupInput.min = `${selectedDate}T07:30`;
+            pickupInput.max = `${selectedDate}T16:30`;
+        }
+
+        // Get modal elements
+        const modal = document.getElementById('confirmation-modal');
+        const confirmYesButton = document.getElementById('confirm-yes');
+        const confirmNoButton = document.getElementById('confirm-no');
+
+        document.getElementById('checkout-button').addEventListener('click', () => {
+            const cart = JSON.parse(localStorage.getItem('cart')) || {};
+            const pickupTime = pickupInput.value;
+            const paymentMethod = document.getElementById('payment-method').value;
+
+            if (Object.keys(cart).length === 0) {
+                showError("Your cart is empty. Please add items to your cart before checking out.");
+                return;
+            }
+
+            if (!pickupTime) {
+                showError("Please select a pickup time.");
+                return;
+            }
+
+            const pickupDate = new Date(pickupTime);
+            const pickupHour = pickupDate.getHours();
+            const pickupMinutes = pickupDate.getMinutes();
+
+            if ((pickupHour < 7 || (pickupHour === 7 && pickupMinutes < 30)) || (pickupHour > 16 || (pickupHour === 16 && pickupMinutes > 30))) {
+                showError("Please select a pickup time between 7:30 AM and 4:30 PM.");
+                return;
+            }
+
+            modal.style.display = 'block';
+        });
+
+        confirmYesButton.addEventListener('click', () => {
+            // Retrieve data from localStorage
+            const cart = JSON.parse(localStorage.getItem('cart')) || {};
+            const priceData = JSON.parse(localStorage.getItem('priceData')) || {};
+            const shopData = JSON.parse(localStorage.getItem('shopData')) || {};
+            const dishName = JSON.parse(localStorage.getItem('dishName')) || {};
+
+
+            // Collect pickup time and payment method
+            const pickupTime = document.getElementById('pickup-time').value;
+            const paymentMethod = document.getElementById('payment-method').value;
+            const totalPrice = document.getElementById('total-price').textContent.split(": ")[1];
+            const quantity = JSON.parse(localStorage.getItem('quantity')) || {};
+            // Validate pickup time
+            if (!pickupTime) {
+                showError("Please select a pickup time.");
+                return;
+            }
+            if (!paymentMethod) {
+                showError("Please select a payment method.");
+                return;
+            }
+
+            if (!totalPrice) {
+                showError("Total price is missing.");
+                return;
+            }
+            localStorage.setItem('paymentMethod', JSON.stringify(paymentMethod));
+            localStorage.setItem('pickupTime', JSON.stringify(pickupTime));
+
+            // Transform `cart` into `orders` array
+            const orders = Object.keys(cart).map(dishName => ({
+                dishName: dishName,
+                price: totalPrice || 0,// Fallback to 0 if price not found
+                shopName: shopData[dishName] || 'Unknown', // Default to 'Unknown' if shop not found
+                quantity: cart[dishName],
+
+            }));
+
+            console.log("Orders to send:", orders);  // Ensure orders data looks correct
+
+            // Send the request
+            fetch('/checkout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    pickupTime: pickupTime,
+                    paymentMethod: paymentMethod,
+                    totalPrice: totalPrice,
+                    orders: orders, // Orders array
+                }),
+            })
+                .then(response => {
+                    if (response.redirected) {
+                        // Handle redirect case (e.g., show confirmation or alert)
+                        window.location.href = response.url; // Redirect the user to the new page
+                    } else {
+                        return response.json(); // Parse JSON if not a redirect
+                    }
+                })
+                .then(data => {
+                    // Handle the JSON data here
+                    console.log(data);
+                })
+
+            modal.style.display = 'none';
+        });
+
+
+        confirmNoButton.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        function showError(message) {
+            const errorMessage = document.getElementById('error-message');
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+        }
+
+        function groupCartItems(cart) {
+            const priceData = JSON.parse(localStorage.getItem('priceData')) || {};
+            const shopData = JSON.parse(localStorage.getItem('shopData')) || {};
+            const groupedOrders = {};
+
+            for (const dishName in cart) {
+                const shopName = shopData[dishName];
+                if (!groupedOrders[shopName]) {
+                    groupedOrders[shopName] = [];
+                }
+                groupedOrders[shopName].push({
+                    dishName,
+                    quantity: cart[dishName],
+                    price: priceData[dishName] || 0,
+                });
+            }
+            return groupedOrders;
+        }
+
+        function displayCart() {
+            const cart = JSON.parse(localStorage.getItem('cart')) || {};
+            const priceData = JSON.parse(localStorage.getItem('priceData')) || {};
+            const imageData = JSON.parse(localStorage.getItem('imageData')) || {};
+            const shopData = JSON.parse(localStorage.getItem('shopData')) || {};
+            const cartItemsContainer = document.getElementById('cart-items');
+            let totalPrice = 0;
+
+            cartItemsContainer.innerHTML = '';
+            if (Object.keys(cart).length === 0) {
+                cartItemsContainer.innerHTML = '<tr><td colspan="7">Your cart is empty.</td></tr>';
+            }
+
+            for (const dishname in cart) {
+                const quantity = cart[dishname];
+                const price = priceData[dishname] || 0;
+                const imageUrl = imageData[dishname] || '';
+                const shopName = shopData[dishname] || 'Unknown';
+                const totalItemPrice = price * quantity;
+
+                totalPrice += totalItemPrice;
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><img src="${imageUrl}" alt="${dishname}" class="dish-pic"></td>
+                    <td>${dishname}</td>
+                    <td>${shopName}</td>
+                    <td>${price} SR</td>
+                    <td>${quantity}</td>
+                    <td>${totalItemPrice} SR</td>
+                    <td><button class="delete-button" onclick="deleteItem('${dishname}')">Delete</button></td>
+                `;
+                cartItemsContainer.appendChild(row);
+            }
+
+            document.getElementById('total-price').textContent = `Total Price: ${totalPrice} SR`;
+        }
+
+        function deleteItem(dishname) {
+            const cart = JSON.parse(localStorage.getItem('cart')) || {};
+            delete cart[dishname];
+            localStorage.setItem('cart', JSON.stringify(cart));
+            displayCart();
+        }
+
+        // Display cart on page load
+        window.onload = () => {
+            setMinMaxTime();
+            displayCart();
+        };
+    </script>
+
+
+</body>
+
+</html>

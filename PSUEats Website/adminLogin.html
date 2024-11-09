@@ -1,0 +1,100 @@
+<!-- admin-login.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="author" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Site specific tags -->
+    <title>PSUEats Admin Login</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/6991b496f2.js" crossorigin="anonymous"></script>
+    <script src="script.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="Login_form">
+            <h1 id="FormHead">Admin Login</h1>
+            <div id="error"></div>
+            <form id="form" action="/adminLogin" method="POST">
+                <div class="inputSet" style="height: 100px;">
+                    <div class="inputFields" id="Email">
+                        <i class="fa-solid fa-envelope"></i>
+                        <i class="fa-regular fa-circle-check" id="correctEmailIcon" style="display: none;"></i>
+                        <i class="fa-regular fa-circle-xmark" id="wrongEmailIcon" style="display: none;"></i>
+                        <input type="email" name="email" placeholder="Email" id="email" onkeyup="emailValidation()"
+                            required>
+                        <span id="emailError" class="errorMseg"></span>
+                    </div>
+
+                    <div class="inputFields" id="Password">
+                        <i class="fa-solid fa-lock"></i>
+                        <i class="fa-regular fa-circle-check" id="correctPassIcon" style="display: none;"></i>
+                        <i class="fa-regular fa-circle-xmark" id="wrongPassIcon" style="display: none;"></i>
+                        <input type="password" name="password" placeholder="Password" id="password"
+                            onkeyup="passValidation()" required>
+                        <span id="passwordError" class="errorMseg"></span>
+                    </div>
+                </div>
+                <div>
+                    <p style="display:block;">Are you a shop owner? <a href="shopownerLogin.html">Login as a
+                            Shop
+                            Owner</a></p>
+
+                    <p class="userSignup" id="userSignup" style="display:block;">Not an Admin? <a
+                            href="index.html">Login as User</a></p>
+
+                </div>
+                <div class="field_btn" id="field_btn" style="height: 100px;">
+                    <button type="submit" class="login_btn" id="login_btn" style="margin-top: 10px;">Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        // Email validation logic (Placeholder)
+        function emailValidation() {
+            let emailInput = document.getElementById("email");
+            let emailError = document.getElementById("emailError");
+            let correctEmailIcon = document.getElementById("correctEmailIcon");
+            let wrongEmailIcon = document.getElementById("wrongEmailIcon");
+
+            // Example basic validation: check for "@" and "."
+            if (emailInput.value.includes("@") && emailInput.value.includes(".")) {
+                emailError.textContent = "";
+                correctEmailIcon.style.display = "inline";
+                wrongEmailIcon.style.display = "none";
+            } else {
+                emailError.textContent = "Invalid Email!";
+                correctEmailIcon.style.display = "none";
+                wrongEmailIcon.style.display = "inline";
+            }
+        }
+
+        // Password validation logic (Placeholder)
+        function passValidation() {
+            let passwordInput = document.getElementById("password");
+            let passwordError = document.getElementById("passwordError");
+            let correctPassIcon = document.getElementById("correctPassIcon");
+            let wrongPassIcon = document.getElementById("wrongPassIcon");
+
+            // Example validation: Password must be at least 6 characters
+            if (passwordInput.value.length >= 6) {
+                passwordError.textContent = "";
+                correctPassIcon.style.display = "inline";
+                wrongPassIcon.style.display = "none";
+            } else {
+                passwordError.textContent = "Password must be at least 6 characters!";
+                correctPassIcon.style.display = "none";
+                wrongPassIcon.style.display = "inline";
+            }
+        }
+    </script>
+
+    <!-- External Script -->
+    <script src="script.js"></script>
+</body>
+
+</html>

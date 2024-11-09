@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- general meta tags -->
+    <meta charset="utf-8">
+    <meta name="author" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- site specific tags -->
+    <title>PSUEats Shop Owner Signup</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/6991b496f2.js" crossorigin="anonymous"></script>
+    <script src="script.js"></script>
+    <style>
+        .field_btn {
+            display: flex;
+            /* Use flexbox to align items */
+            justify-content: center;
+            /* Center items horizontally */
+            margin-top: 20px;
+            /* Add some space above the button */
+        }
+
+        /* Optional: Style for the button */
+        #signup_btn {
+            padding: 10px 20px;
+            /* Add some padding to the button */
+            font-size: 16px;
+            /* Adjust font size */
+            cursor: pointer;
+            /* Change cursor to pointer on hover */
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="Login_form">
+            <h1 id="FormHead">Shop Owner Sign Up</h1>
+            <div id="error"></div>
+            <form id="form" action="/shopowner-signup" method="POST" onsubmit="return showPendingMessage(event)">
+                <div class="inputSet">
+                    <div class="inputFields" id="Username">
+                        <i class="fa-solid fa-user"></i>
+                        <input type="text" name="name" placeholder="Name" id="name" onkeyup="nameValidation()" required>
+                        <span id="nameError" class="errorMseg"></span>
+                    </div>
+
+                    <div class="inputFields" id="PhoneNum">
+                        <i class="fa-solid fa-phone"></i>
+                        <input type="tel" name="phoneNum" placeholder="Phone" id="phoneNum" onkeyup="phoneValidation()"
+                            required>
+                        <span id="phoneError" class="errorMseg"></span>
+                    </div>
+
+                    <div class="inputFields" id="Password">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" name="password" placeholder="Password" id="password"
+                            onkeyup="passValidation()" required>
+                        <span id="passwordError" class="errorMseg"></span>
+                    </div>
+
+                    <div class="inputFields" id="Password2">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" name="password2" placeholder="Confirm Password" id="password2"
+                            onkeyup="passConfirmValidation()" required>
+                        <span id="confirmationError" class="errorMseg"></span>
+                    </div>
+                    <div class="inputFields" id="IqamaID">
+                        <i class="fa-solid fa-id-card"></i>
+                        <input type="text" name="iqamaID" placeholder="Iqama/National ID" id="iqamaID"
+                            onkeyup="iqamaValidation()" required>
+                        <span id="iqamaError" class="errorMseg"></span>
+                    </div>
+
+                    <p style="display: block; margin: 20px; ">Already have a shop owner
+                        account? <a href="shopownerLogin.html">Login
+                            as Shop Owner</a></p>
+                    <p style="display: block; margin: 20px;">Admin? <a href="adminLogin.html">Login here</a>
+                    </p>
+                    <p class="userSignup" id="userSignup" style="display: block; margin: 20px;">Not Shop Owner? <a
+                            href="index.html">Login as User</a></p>
+                </div>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <div class="field_btn">
+                    <button type="submit" id="signup_btn">Sign Up</button>
+                </div>
+            </form>
+
+            <!-- Message Section -->
+            <div id="message" style="display:none; margin-top: 20px; color: green;"></div>
+        </div>
+    </div>
+
+    <script>
+        // Show the pending approval message
+        function showPendingMessage(event) {
+            event.preventDefault(); // Prevent the default form submission
+            const form = event.target;
+
+            // Perform the form submission using Fetch API
+            fetch(form.action, {
+                method: form.method,
+                body: new URLSearchParams(new FormData(form)),
+            })
+                .then(response => response.text())
+                .then(message => {
+                    // Show the message
+                    const messageDiv = document.getElementById("message");
+                    messageDiv.textContent = message;
+                    messageDiv.style.display = "block";
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+        function iqamaValidation() {
+            const iqamaInput = document.getElementById("iqamaID");
+            const iqamaError = document.getElementById("iqamaError");
+            const iqamaValue = iqamaInput.value;
+
+            // Check if input is 10 digits long
+            if (/^\d{10}$/.test(iqamaValue)) {
+                iqamaError.textContent = "";  // Clear error if valid
+            } else {
+                iqamaError.textContent = "ID must be exactly 10 digits.";  // Show error if invalid
+            }
+        }
+
+    </script>
+    <script src="script.js"></script>
+</body>
+
+</html>
