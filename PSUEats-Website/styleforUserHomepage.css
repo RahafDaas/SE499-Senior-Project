@@ -87,7 +87,8 @@ body {
   width: 60%;
   height: 40px;
   display: flex;
-  justify-content: space-around;
+
+  justify-content: space-between;
   background-color: var(--whiteColor);
   border-radius: 20px;
 }

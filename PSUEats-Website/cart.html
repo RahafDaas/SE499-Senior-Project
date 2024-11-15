@@ -333,6 +333,29 @@
             flex-direction: column-reverse;
             width: 50%;
         }
+
+        #checkoutModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        #checkoutModal>div {
+            background-color: white;
+            padding: 20px;
+            text-align: center;
+            width: 300px;
+        }
+
+        .cart-item {
+            margin: 10px 0;
+        }
     </style>
 </head>
 
@@ -390,7 +413,7 @@
     <!-- Modal for confirmation -->
     <div id="confirmation-modal" class="modal">
         <div class="modal-content">
-            <p>Do you want to proceed to payment or edit your cart?</p>
+            <p>Are you ready to checkout this order?</p>
             <div class="button-container">
                 <button id="confirm-yes" class="confirm-yes">Yes</button>
                 <button id="confirm-no" class="confirm-no">Cancel</button>
@@ -415,7 +438,7 @@
         const confirmNoButton = document.getElementById('confirm-no');
 
         document.getElementById('checkout-button').addEventListener('click', () => {
-            const cart = JSON.parse(localStorage.getItem('cart')) || {};
+            const cart = JSON.parse(sessionStorage.getItem('cart')) || {};
             const pickupTime = pickupInput.value;
             const paymentMethod = document.getElementById('payment-method').value;
 
@@ -442,19 +465,18 @@
         });
 
         confirmYesButton.addEventListener('click', () => {
-            // Retrieve data from localStorage
-            const cart = JSON.parse(localStorage.getItem('cart')) || {};
-            const priceData = JSON.parse(localStorage.getItem('priceData')) || {};
-            const shopData = JSON.parse(localStorage.getItem('shopData')) || {};
-            const dishName = JSON.parse(localStorage.getItem('dishName')) || {};
-
+            // Retrieve data from sessionStorage
+            const cart = JSON.parse(sessionStorage.getItem('cart')) || {};
+            const priceData = JSON.parse(sessionStorage.getItem('priceData')) || {};
+            const shopData = JSON.parse(sessionStorage.getItem('shopData')) || {};
+            const dishName = JSON.parse(sessionStorage.getItem('dishName')) || {};
 
             // Collect pickup time and payment method
             const pickupTime = document.getElementById('pickup-time').value;
             const paymentMethod = document.getElementById('payment-method').value;
             const totalPrice = document.getElementById('total-price').textContent.split(": ")[1];
-            const quantity = JSON.parse(localStorage.getItem('quantity')) || {};
-            // Validate pickup time
+            const quantity = JSON.parse(sessionStorage.getItem('quantity')) || {};
+
             if (!pickupTime) {
                 showError("Please select a pickup time.");
                 return;
@@ -463,24 +485,23 @@
                 showError("Please select a payment method.");
                 return;
             }
-
             if (!totalPrice) {
                 showError("Total price is missing.");
                 return;
             }
-            localStorage.setItem('paymentMethod', JSON.stringify(paymentMethod));
-            localStorage.setItem('pickupTime', JSON.stringify(pickupTime));
+
+            sessionStorage.setItem('paymentMethod', JSON.stringify(paymentMethod));
+            sessionStorage.setItem('pickupTime', JSON.stringify(pickupTime));
 
             // Transform `cart` into `orders` array
             const orders = Object.keys(cart).map(dishName => ({
                 dishName: dishName,
-                price: totalPrice || 0,// Fallback to 0 if price not found
-                shopName: shopData[dishName] || 'Unknown', // Default to 'Unknown' if shop not found
+                price: totalPrice || 0,
+                shopName: shopData[dishName] || 'Unknown',
                 quantity: cart[dishName],
-
             }));
 
-            console.log("Orders to send:", orders);  // Ensure orders data looks correct
+            console.log("Orders to send:", orders);
 
             // Send the request
             fetch('/checkout', {
@@ -490,25 +511,22 @@
                     pickupTime: pickupTime,
                     paymentMethod: paymentMethod,
                     totalPrice: totalPrice,
-                    orders: orders, // Orders array
+                    orders: orders,
                 }),
             })
                 .then(response => {
                     if (response.redirected) {
-                        // Handle redirect case (e.g., show confirmation or alert)
-                        window.location.href = response.url; // Redirect the user to the new page
+                        window.location.href = response.url;
                     } else {
-                        return response.json(); // Parse JSON if not a redirect
+                        return response.json();
                     }
                 })
                 .then(data => {
-                    // Handle the JSON data here
                     console.log(data);
-                })
+                });
 
             modal.style.display = 'none';
         });
-
 
         confirmNoButton.addEventListener('click', () => {
             modal.style.display = 'none';
@@ -521,8 +539,8 @@
         }
 
         function groupCartItems(cart) {
-            const priceData = JSON.parse(localStorage.getItem('priceData')) || {};
-            const shopData = JSON.parse(localStorage.getItem('shopData')) || {};
+            const priceData = JSON.parse(sessionStorage.getItem('priceData')) || {};
+            const shopData = JSON.parse(sessionStorage.getItem('shopData')) || {};
             const groupedOrders = {};
 
             for (const dishName in cart) {
@@ -540,10 +558,10 @@
         }
 
         function displayCart() {
-            const cart = JSON.parse(localStorage.getItem('cart')) || {};
-            const priceData = JSON.parse(localStorage.getItem('priceData')) || {};
-            const imageData = JSON.parse(localStorage.getItem('imageData')) || {};
-            const shopData = JSON.parse(localStorage.getItem('shopData')) || {};
+            const cart = JSON.parse(sessionStorage.getItem('cart')) || {};
+            const priceData = JSON.parse(sessionStorage.getItem('priceData')) || {};
+            const imageData = JSON.parse(sessionStorage.getItem('imageData')) || {};
+            const shopData = JSON.parse(sessionStorage.getItem('shopData')) || {};
             const cartItemsContainer = document.getElementById('cart-items');
             let totalPrice = 0;
 
@@ -578,18 +596,18 @@
         }
 
         function deleteItem(dishname) {
-            const cart = JSON.parse(localStorage.getItem('cart')) || {};
+            const cart = JSON.parse(sessionStorage.getItem('cart')) || {};
             delete cart[dishname];
-            localStorage.setItem('cart', JSON.stringify(cart));
+            sessionStorage.setItem('cart', JSON.stringify(cart));
             displayCart();
         }
 
-        // Display cart on page load
         window.onload = () => {
             setMinMaxTime();
             displayCart();
         };
     </script>
+
 
 
 </body>

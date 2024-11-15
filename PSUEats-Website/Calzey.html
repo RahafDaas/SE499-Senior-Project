@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maitre Restaurant Menu</title>
+    <title>Calzey Cafe Menu</title>
     <script src="https://kit.fontawesome.com/6991b496f2.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="style.css">
     <style>
@@ -252,7 +252,7 @@
 
 <body>
     <header>
-        <h1>Maitre Resturant Menu</h1>
+        <h1>Calzey Cafe Menu</h1>
         <nav>
             <a href="/home">Home</a>
             <a href="/logout">Logout</a>
@@ -279,16 +279,16 @@
     </div>
 
     <footer>
-        &copy; 2024 Maitre Restaurant. All rights reserved.
+        &copy; 2024 Calzey Cafe. All rights reserved.
     </footer>
 
     <script>
         let allMenuItems = []; // Store all menu items globally
-        let cart = JSON.parse(localStorage.getItem('cart')) || {}; // Initialize cart from localStorage
+        let cart = JSON.parse(sessionStorage.getItem('cart')) || {}; // Initialize cart from sessionStorage
 
         async function fetchMenuItems() {
             try {
-                const response = await fetch('/get-menu-items?restaurant=Maitre Choux Cafe');
+                const response = await fetch('/get-menu-items?restaurant=Clazey Cafe');
                 if (!response.ok) throw new Error('Failed to fetch menu items');
                 allMenuItems = await response.json();
                 displayMenu(allMenuItems);
@@ -330,25 +330,25 @@
             if (currentQuantity > 0) {
                 cart[dishname] = currentQuantity;
 
-                // Store price and image URL in localStorage
+                // Store price and image URL in sessionStorage
                 const item = allMenuItems.find(item => item.dishname === dishname);
                 if (item) {
-                    const priceData = JSON.parse(localStorage.getItem('priceData')) || {};
-                    const imageData = JSON.parse(localStorage.getItem('imageData')) || {};
-                    const shopData = JSON.parse(localStorage.getItem('shopData')) || {};
+                    const priceData = JSON.parse(sessionStorage.getItem('priceData')) || {};
+                    const imageData = JSON.parse(sessionStorage.getItem('imageData')) || {};
+                    const shopData = JSON.parse(sessionStorage.getItem('shopData')) || {};
 
                     priceData[dishname] = item.price; // Store price
                     imageData[dishname] = item.dishPic; // Store image URL
-                    shopData[dishname] = "Maitre Choux Cafe"; // Store the shop name
-                    localStorage.setItem('shopData', JSON.stringify(shopData));
-                    localStorage.setItem('priceData', JSON.stringify(priceData));
-                    localStorage.setItem('imageData', JSON.stringify(imageData));
+                    shopData[dishname] = "Calzey Cafe"; // Store the shop name
+                    sessionStorage.setItem('shopData', JSON.stringify(shopData));
+                    sessionStorage.setItem('priceData', JSON.stringify(priceData));
+                    sessionStorage.setItem('imageData', JSON.stringify(imageData));
                 }
             } else {
                 delete cart[dishname];
             }
 
-            localStorage.setItem('cart', JSON.stringify(cart)); // Save cart to localStorage
+            sessionStorage.setItem('cart', JSON.stringify(cart)); // Save cart to sessionStorage
             updateCart();
         }
 

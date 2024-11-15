@@ -302,76 +302,153 @@
                             <th>User Email</th>
                             <th>Dish Name</th>
                             <th>Price</th>
-                            <th>Quantity</th>
                             <th>Payment Status</th>
                             <th>Order Status</th>
+
                         </tr>
                     </thead>
                     <tbody>
                         <% if (orders && orders.length> 0) { %>
                             <% orders.forEach(order=> { %>
-                                <% order.orders.forEach(item=> { %>
-                                    <% if (item.shopName===name) { %>
-                                        <!-- Ensure the item belongs to the current shop -->
-                                        <tr>
-                                            <td>
-                                                <%= order._id %>
-                                            </td>
-                                            <td>
-                                                <%= order.email %>
-                                            </td>
-                                            <td>
-                                                <%= item.dishName %>
-                                            </td>
-                                            <td>
-                                                <%= item.price %>
-                                            </td>
-                                            <td>
-                                                <%= item.quantity %>
-                                            </td>
-                                            <td>
-                                                <%= order.paymentStatus %>
-                                            </td>
-                                            <td>
-                                                <!-- Update Status Form -->
-                                                <form action="/update-order-status" method="POST"
-                                                    style="display:inline;">
-                                                    <select name="orderStatus">
-                                                        <option value="Pending" <%=order.orderStatus==='Pending'
-                                                            ? 'selected' : '' %>>Pending</option>
-                                                        <option value="Confirmed" <%=order.orderStatus==='Confirmed'
-                                                            ? 'selected' : '' %>>Confirmed</option>
-                                                        <option value="Processing" <%=order.orderStatus==='Processing'
-                                                            ? 'selected' : '' %>>Processing</option>
-                                                        <option value="Ready" <%=order.orderStatus==='Ready'
-                                                            ? 'selected' : '' %>>Ready</option>
-                                                        <option value="Picked Up" <%=order.orderStatus==='Picked Up'
-                                                            ? 'selected' : '' %>>Picked Up</option>
-                                                        <option value="Rejected" <%=order.orderStatus==='Rejected'
-                                                            ? 'selected' : '' %>>Rejected</option>
-                                                    </select>
-                                                    <input type="hidden" name="orderId" value="<%= order._id %>" />
-                                                    <button type="submit" class="status-btn update-status">Update
-                                                        Status</button>
-                                                </form>
+                                <% const itemsForShop=order.orders.filter(item=> item.shopName === name); %>
+                                    <% const totalPrice=itemsForShop.reduce((sum, item)=> sum + ((item.price || 0) *
+                                        (item.quantity || 1)), 0); %>
 
-                                                <!-- Delete Button Form -->
-                                                <form action="/delete-order" method="POST" style="display:inline;">
-                                                    <input type="hidden" name="orderId" value="<%= order._id %>" />
-                                                    <button type="submit" class="delete-btn"
-                                                        onclick="return confirm('Are you sure you want to delete this order?')">Delete</button>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                        <% } %>
-                                            <% }) %>
-                                                <% }) %>
+                                        <% if (itemsForShop.length> 0) { %>
+                                            <tr>
+                                                <td rowspan="<%= itemsForShop.length %>">
+                                                    <%= order._id %>
+                                                </td>
+                                                <td rowspan="<%= itemsForShop.length %>">
+                                                    <%= order.email %>
+                                                </td>
+
+                                                <% if (itemsForShop.length===1) { %>
+                                                    <!-- Single item in the order: display in one row -->
+                                                    <td>
+                                                        <%= itemsForShop[0].dishName %> (x<%= itemsForShop[0].quantity
+                                                                %>)
+                                                    </td>
+                                                    <td rowspan="<%= itemsForShop.length %>">
+                                                        <%= itemsForShop[0].price %>
+                                                    </td>
+                                                    <td>
+                                                        <%= order.paymentStatus %>
+                                                    </td>
+
+                                                    <td>
+                                                        <!-- Update Status Form -->
+                                                        <form action="/update-order-status" method="POST"
+                                                            style="display:inline;">
+                                                            <select name="orderStatus">
+                                                                <option value="Pending" <%=order.orderStatus==='Pending'
+                                                                    ? 'selected' : '' %>>Pending</option>
+                                                                <option value="Confirmed"
+                                                                    <%=order.orderStatus==='Confirmed' ? 'selected' : ''
+                                                                    %>>Confirmed</option>
+                                                                <option value="Processing"
+                                                                    <%=order.orderStatus==='Processing' ? 'selected'
+                                                                    : '' %>>Processing</option>
+                                                                <option value="Ready" <%=order.orderStatus==='Ready'
+                                                                    ? 'selected' : '' %>>Ready</option>
+                                                                <option value="Picked Up"
+                                                                    <%=order.orderStatus==='Picked Up' ? 'selected' : ''
+                                                                    %>>Picked Up</option>
+                                                                <option value="Rejected"
+                                                                    <%=order.orderStatus==='Rejected' ? 'selected' : ''
+                                                                    %>>Rejected</option>
+                                                            </select>
+                                                            <input type="hidden" name="orderId"
+                                                                value="<%= order._id %>" />
+                                                            <button type="submit"
+                                                                class="status-btn update-status">Update Status</button>
+                                                        </form>
+
+                                                        <!-- Delete Button Form -->
+                                                        <form action="/delete-order" method="POST"
+                                                            style="display:inline;">
+                                                            <input type="hidden" name="orderId"
+                                                                value="<%= order._id %>" />
+                                                            <button type="submit" class="delete-btn"
+                                                                onclick="return confirm('Are you sure you want to delete this order?')">Delete</button>
+                                                        </form>
+                                                    </td>
                                                     <% } else { %>
-                                                        <tr>
-                                                            <td colspan="7">No orders available for your shop.</td>
-                                                        </tr>
+                                                        <!-- Multiple items: display each item in a separate row -->
+                                                        <% itemsForShop.forEach((item, index)=> { %>
+                                                            <% if (index> 0) { %>
+                                            <tr>
+                                                <% } %>
+                                                    <td>
+                                                        <%= item.dishName %> (x<%= item.quantity %>)
+                                                    </td>
+
+                                                    <% if (index===0) { %>
+                                                        <td rowspan="<%= itemsForShop.length %>">
+                                                            <%= itemsForShop[0].price %>
+                                                        </td>
+                                                        <td rowspan="<%= itemsForShop.length %>">
+                                                            <%= order.paymentStatus %>
+                                                        </td>
+
+                                                        <td rowspan="<%= itemsForShop.length %>">
+                                                            <!-- Update Status Form -->
+                                                            <form action="/update-order-status" method="POST"
+                                                                style="display:inline;">
+                                                                <select name="orderStatus">
+                                                                    <option value="Pending"
+                                                                        <%=order.orderStatus==='Pending' ? 'selected'
+                                                                        : '' %>>Pending</option>
+                                                                    <option value="Confirmed"
+                                                                        <%=order.orderStatus==='Confirmed' ? 'selected'
+                                                                        : '' %>>Confirmed</option>
+                                                                    <option value="Processing"
+                                                                        <%=order.orderStatus==='Processing' ? 'selected'
+                                                                        : '' %>>Processing</option>
+                                                                    <option value="Ready" <%=order.orderStatus==='Ready'
+                                                                        ? 'selected' : '' %>>Ready</option>
+                                                                    <option value="Picked Up"
+                                                                        <%=order.orderStatus==='Picked Up' ? 'selected'
+                                                                        : '' %>>Picked Up</option>
+                                                                    <option value="Rejected"
+                                                                        <%=order.orderStatus==='Rejected' ? 'selected'
+                                                                        : '' %>>Rejected</option>
+                                                                </select>
+                                                                <input type="hidden" name="orderId"
+                                                                    value="<%= order._id %>" />
+                                                                <button type="submit"
+                                                                    class="status-btn update-status">Update
+                                                                    Status</button>
+                                                            </form>
+
+                                                            <!-- Delete Button Form -->
+                                                            <form action="/delete-order" method="POST"
+                                                                style="display:inline;">
+                                                                <input type="hidden" name="orderId"
+                                                                    value="<%= order._id %>" />
+                                                                <button type="submit" class="delete-btn"
+                                                                    onclick="return confirm('Are you sure you want to delete this order?')">Delete</button>
+                                                            </form>
+                                                        </td>
                                                         <% } %>
+                                            </tr>
+                                            <% }) %>
+                                                <% } %>
+                                                    <% } %>
+                                                        <% }) %>
+                                                            <% } else { %>
+                                                                <tr>
+                                                                    <td colspan="7">No orders available for your shop.
+                                                                    </td>
+                                                                </tr>
+                                                                <% } %>
                     </tbody>
+
+
+
+
+
+
                 </table>
             </div>
 

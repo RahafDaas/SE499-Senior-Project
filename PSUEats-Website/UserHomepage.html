@@ -122,10 +122,9 @@
         <h1 class="logo">PSUEats</h1>
         <div class="sidebar-menu">
             <a href="#"><i class="fa-solid fa-house"></i> Home</a>
-            <a href="#"><i class="fa-solid fa-clock"></i> My Orders</a>
+            <a href="/order-history"><i class="fa-solid fa-clock"></i> My Orders</a>
             <a href="AboutUs"><i class="fa-solid fa-circle-info"></i> About Us</a>
 
-            <a href="#"><i class="fa-solid fa-gear"></i> Settings</a>
         </div>
         <div class="sidebar-logout">
             <a href="/Logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
@@ -170,9 +169,8 @@
 
         <script>
             let allRestaurants = [];
-            let cart = JSON.parse(localStorage.getItem('cart')) || {}; // Load cart from localStorage
+            let cart = JSON.parse(sessionStorage.getItem('cart')) || {}; // Load cart from sessionStorage
             let currentRestaurantCode = ''; // Store the current restaurant code
-
 
             // Fetch restaurants and store them globally
             async function fetchRestaurants() {
@@ -197,14 +195,14 @@
                     restaurantCard.setAttribute('data-code', restaurant.code);
 
                     restaurantCard.innerHTML = `
-                <img src="${restaurant.logoUrl}" alt="${restaurant.title}">
-                <div>
-                    <h4>${restaurant.title}</h4>
-                    <p>${restaurant.location}</p>
-                    <p>Open: ${restaurant.isOpen ? 'Yes' : 'No'}</p>
-                    <p>Rating: ${restaurant.rating} (${restaurant.ratingCount} reviews)</p>
-                </div>
-            `;
+                        <img src="${restaurant.logoUrl}" alt="${restaurant.title}">
+                        <div>
+                            <h4>${restaurant.title}</h4>
+                            <p>${restaurant.location}</p>
+                            <p>Open: ${restaurant.isOpen ? 'Yes' : 'No'}</p>
+                            <p>Rating: ${restaurant.rating} (${restaurant.ratingCount} reviews)</p>
+                        </div>
+                    `;
 
                     // Redirect to specific restaurant page on click
                     restaurantCard.addEventListener('click', () => {
@@ -240,7 +238,7 @@
                                 window.location.href = 'somatcha.html';
                                 break;
                             default:
-                                alert('Page for ${ restaurant.title } is not available yet.');
+                                alert(`Page for ${restaurant.title} is not available yet.`);
                         }
                     });
 
@@ -269,11 +267,10 @@
                 }
 
                 cart[name] = cart[name] ? cart[name] + 1 : 1;
-                localStorage.setItem('cart', JSON.stringify(cart));
+                sessionStorage.setItem('cart', JSON.stringify(cart));
                 updateCartCount();
                 saveCartToDatabase(name, image, price, code);
             }
-
 
             async function saveCartToDatabase(name, image, price, code) {
                 const response = await fetch('/add-to-cart', {
@@ -294,12 +291,14 @@
             function viewCart() {
                 window.location.href = 'cart.html';
             }
+
             // Fetch and display restaurants on page load
             window.onload = () => {
                 fetchRestaurants();
                 updateCart(); // Sync cart on page load
             };
         </script>
+
     </div>
 </body>
 

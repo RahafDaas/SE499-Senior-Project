@@ -283,7 +283,7 @@
 
     <script>
         let allMenuItems = []; // Store all menu items globally
-        let cart = JSON.parse(localStorage.getItem('cart')) || {}; // Initialize cart from localStorage
+        let cart = JSON.parse(sessionStorage.getItem('cart')) || {}; // Initialize cart from sessionStorage
 
         async function fetchMenuItems() {
             try {
@@ -329,31 +329,39 @@
             if (currentQuantity > 0) {
                 cart[dishname] = currentQuantity;
 
-                // Store price and image URL in localStorage
+                // Store price and image URL in sessionStorage
                 const item = allMenuItems.find(item => item.dishname === dishname);
                 if (item) {
-                    const priceData = JSON.parse(localStorage.getItem('priceData')) || {};
-                    const imageData = JSON.parse(localStorage.getItem('imageData')) || {};
-                    const shopData = JSON.parse(localStorage.getItem('shopData')) || {};
+                    const priceData = JSON.parse(sessionStorage.getItem('priceData')) || {};
+                    const imageData = JSON.parse(sessionStorage.getItem('imageData')) || {};
+                    const shopData = JSON.parse(sessionStorage.getItem('shopData')) || {};
 
                     priceData[dishname] = item.price; // Store price
                     imageData[dishname] = item.dishPic; // Store image URL
-                    shopData[dishname] = "Selu Cafe"; // Store the shop name
-                    localStorage.setItem('shopData', JSON.stringify(shopData));
-                    localStorage.setItem('priceData', JSON.stringify(priceData));
-                    localStorage.setItem('imageData', JSON.stringify(imageData));
+                    shopData[dishname] = "Saadedin Resturant"; // Store the shop name
+                    sessionStorage.setItem('shopData', JSON.stringify(shopData));
+                    sessionStorage.setItem('priceData', JSON.stringify(priceData));
+                    sessionStorage.setItem('imageData', JSON.stringify(imageData));
                 }
             } else {
+                // Remove item if quantity is zero
+                delete cart[dishname];
+                const priceData = JSON.parse(sessionStorage.getItem('priceData')) || {};
+                const imageData = JSON.parse(sessionStorage.getItem('imageData')) || {};
+                const shopData = JSON.parse(sessionStorage.getItem('shopData')) || {};
+
                 delete priceData[dishname];
                 delete imageData[dishname];
                 delete shopData[dishname];
-                delete cart[dishname];
+
+                sessionStorage.setItem('priceData', JSON.stringify(priceData));
+                sessionStorage.setItem('imageData', JSON.stringify(imageData));
+                sessionStorage.setItem('shopData', JSON.stringify(shopData));
             }
 
-            localStorage.setItem('cart', JSON.stringify(cart)); // Save cart to localStorage
+            sessionStorage.setItem('cart', JSON.stringify(cart)); // Save cart to sessionStorage
             updateCart();
         }
-
 
         function updateCart() {
             const cartCount = Object.values(cart).reduce((sum, qty) => sum + qty, 0);
@@ -361,9 +369,9 @@
         }
 
         function viewCart() {
-
             window.location.href = 'cart.html';
         }
+
         function searchMenu() {
             const query = document.getElementById('searchInput').value.toLowerCase();
             const filteredItems = allMenuItems.filter(item =>
@@ -395,6 +403,7 @@
             updateCart(); // Sync cart on page load
         };
     </script>
+
 </body>
 
 </html>

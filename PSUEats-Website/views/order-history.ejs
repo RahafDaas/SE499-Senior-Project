@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order History</title>
+    <style>
+        /* Global styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background-color: #f8f9fa;
+        }
+
+        h1 {
+            color: white;
+        }
+
+        h2,
+        h3,
+        h4 {
+            color: #1d3557;
+        }
+
+        header {
+            height: 90px;
+            background-color: #1d3557;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            margin: 0;
+            flex: 1;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        nav a {
+            background-color: #efb300;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            color: white;
+            text-decoration: none;
+            transition: background-color 0.3s;
+            font-size: 1rem;
+        }
+
+        nav a:hover {
+            background-color: #d80000;
+        }
+
+        .order-history-container {
+            width: 90%;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .orders-list {
+            margin-top: 20px;
+        }
+
+        .order-item {
+            background-color: #f1f1f1;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .order-item h3 {
+            color: #1d3557;
+            font-size: 1.5rem;
+        }
+
+        .order-item p {
+            margin: 8px 0;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .view-details {
+            background-color: #28a745;
+        }
+
+        .view-details:hover {
+            background-color: #218838;
+        }
+
+        .delete-btn {
+            background-color: #dc3545;
+        }
+
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
+
+        .order-details {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            display: none;
+        }
+
+        /* Mobile-first responsive design */
+        @media (max-width: 600px) {
+            .order-history-container {
+                padding: 15px;
+            }
+
+            .order-item p {
+                font-size: 14px;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Order History</h1>
+        <nav>
+            <a href="/home">Home</a>
+            <a href="/logout">Logout</a>
+        </nav>
+    </header>
+
+    <div class="order-history-container">
+        <h2>Your Orders</h2>
+        <div class="orders-list">
+            <% if (orders.length===0) { %>
+                <p>No orders found.</p>
+                <% } else { %>
+                    <% orders.forEach(order=> { %>
+                        <div class="order-item" id="order-<%= order._id %>">
+                            <!-- Only Order ID and Total Price initially -->
+                            <h3>Order ID: <%= order._id %>
+                            </h3>
+                            <p><strong>Total Price:</strong>
+                                <%= order.totalPrice %>
+                            </p>
+
+                            <!-- View Details and Delete Buttons -->
+                            <button class="view-details" onclick="toggleDetails('<%= order._id %>')">View Order
+                                Details</button>
+                            <button class="delete-btn" onclick="deleteOrder('<%= order._id %>')">Delete Order</button>
+
+                            <!-- Hidden Order Details Section -->
+                            <div class="order-details" id="details-<%= order._id %>">
+                                <p><strong>Status:</strong>
+                                    <%= order.orderStatus %>
+                                </p>
+                                <p><strong>Payment Status:</strong>
+                                    <%= order.paymentStatus %>
+                                </p>
+                                <p><strong>Pickup Time:</strong>
+                                    <%= order.pickupTime %>
+                                </p> <!-- Added Pickup Time -->
+                                <h4>Items:</h4>
+                                <ul>
+                                    <% order.orders.forEach(item=> { %>
+                                        <li>
+                                            <%= item.dishName %> x <%= item.quantity %> item/s
+                                        </li>
+                                        <% }) %>
+                                </ul>
+                            </div>
+                        </div>
+                        <hr />
+                        <% }) %>
+                            <% } %>
+        </div>
+    </div>
+
+    <script>
+        // Toggle the visibility of the order details
+        function toggleDetails(orderId) {
+            const details = document.getElementById(`details-${orderId}`);
+            if (details.style.display === "none" || details.style.display === "") {
+                details.style.display = "block";
+            } else {
+                details.style.display = "none";
+            }
+        }
+
+        // Delete the order
+        function deleteOrder(orderId) {
+            fetch(`/order/delete/${orderId}`, { method: 'DELETE' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById(`order-${orderId}`).remove();
+                    } else {
+                        alert('Failed to delete order.');
+                    }
+                })
+                .catch(err => {
+                    console.error('Error:', err);
+                    alert('An error occurred while deleting the order.');
+                });
+        }
+    </script>
+</body>
+
+</html>

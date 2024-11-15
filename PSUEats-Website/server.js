@@ -1,7 +1,7 @@
 const express = require("express");
 const multer = require("multer");
 const path = require("path");
-const stripe = require("stripe")("YOUR_SECRET_KEY");
+//const stripe = require("stripe")(process.env.STRIPE_SECRET_key);
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const app = express();
@@ -493,6 +493,38 @@ app.get("/get-menu-items", async (req, res) => {
   }
 });
 
+app.get("/order-history", async (req, res) => {
+  try {
+    if (!req.session.email) {
+      return res.redirect("/login"); // Redirect to login if not logged in
+    }
+
+    // Fetch orders based on the user's email
+    const orders = await Order.find({ email: req.session.email }).sort({
+      createdAt: -1,
+    });
+
+    // Render order history page with the user's orders
+    res.render("order-history", { orders });
+  } catch (err) {
+    console.error("Error fetching orders:", err);
+    res.status(500).send("Server error");
+  }
+});
+
+app.delete("/order/delete/:orderId", (req, res) => {
+  const { orderId } = req.params;
+  // Use the orderId to delete the order from the database
+  Order.findByIdAndDelete(orderId, (err, result) => {
+    if (err) {
+      return res
+        .status(500)
+        .json({ success: false, message: "Failed to delete order" });
+    }
+    return res.status(200).json({ success: true });
+  });
+});
+
 let ordersByOwner = {};
 
 // Function to group and store orders by shop owner
@@ -620,12 +652,25 @@ app.post("/update-order-status", isAuthenticated, async (req, res) => {
     // Check if the order exists
     const order = await Order.findById(orderId);
     if (!order) {
+      console.log("Order not found");
       return res.status(404).send("Order not found.");
     }
 
     // Update the order status
     order.orderStatus = orderStatus;
+
+    // Check if orderStatus should trigger paymentStatus change to 'Paid'
+    if (["Confirmed", "Processing", "Picked Up"].includes(orderStatus)) {
+      order.paymentStatus = "Paid";
+    } else {
+      console.log(
+        "paymentStatus not updated since orderStatus is not in the specified list"
+      );
+    }
+
+    // Save the changes
     await order.save();
+    console.log("Order saved successfully");
 
     // Redirect back to the dashboard after updating the status
     res.redirect("/dashboard"); // You can also send a message or update with a success message
@@ -709,7 +754,7 @@ app.post(
 // =======================================
 // Stripe
 // =======================================
-app.post("/create-payment-intent", async (req, res) => {
+/*app.post("/create-payment-intent", async (req, res) => {
   const { amount } = req.body; // Amount should be in cents
 
   try {
@@ -722,7 +767,7 @@ app.post("/create-payment-intent", async (req, res) => {
     res.status(500).send({ error: error.message });
   }
 });
-
+*/
 // Route to update order status
 app.post("/update-status/:id", isAuthenticated, async (req, res) => {
   try {
