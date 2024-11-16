@@ -198,7 +198,7 @@
                 <p><strong>Pickup Time:</strong> <span id="pickup-time">
                         <%= order.pickupTime %>
                     </span></p>
-                <p><strong>Total Price:</strong> $<span id="total-price">
+                <p><strong>Total Price:</strong> <span id="total-price">
                         <%= order.totalPrice %>
                     </span></p>
                 <p><strong>Payment Method:</strong> <span id="payment-method">
@@ -214,7 +214,7 @@
                 <ul id="order-items-list">
                     <% order.orders.forEach(item=> { %>
                         <li>
-                            <%= item.dishName %> - $<%= item.price %> x <%= item.quantity %>
+                            <%= item.dishName %> - <%= item.price %> x <%= item.quantity %>
                         </li>
                         <li>
                             Shop Name: <%= item.shopName %>
@@ -228,12 +228,17 @@
             <form action="/update-status/<%= order._id %>" method="POST">
                 <button type="submit" id="update-status-btn">Update Status</button>
             </form>
+            <button id="review-order-btn" onclick="redirectToReview('<%= order._id %>')">Review Order</button>
         </div>
     </div>
 
     <script>
         // Clear local storage
         sessionStorage.clear();
+        // Function to redirect to the reviewOrder page
+        function redirectToReview(orderId) {
+            window.location.href = `reviewOrder.html`;
+        }
     </script>
 </body>
 

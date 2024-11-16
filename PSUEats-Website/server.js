@@ -8,6 +8,18 @@ const app = express();
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const data = require("./data");
+
+// Set up storage configuration for multer
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/"); // Directory where files will be saved
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname)); // Append timestamp to filename
+  },
+});
+const upload = multer({ storage: storage });
+
 // Set the view engine to EJS
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views")); // Set the views directory
@@ -19,7 +31,11 @@ const User = require("./UserSchema"); // User schema
 const ShopOwner = require("./ShopOwnerSchema"); // Shop Owner schema
 const Restaurant = require("./RestaurantSchema"); // Restaurant schema
 const Order = require("./OrderSchema"); // Import Order model
+const Item = require("./menuItemMgmntSchema"); //menu item schema
+const Offer = require("./OffersSchema"); // Offers Schema
+const Review = require("./ReviewSchema");
 const { isAuthenticated, isAdmin } = require("./middleware"); // Admin, User middleware for protected routes
+const { title } = require("process");
 
 const MONGO_URI =
   "mongodb+srv://Rahaf2:Rahaftest1@cluster0.2j8u5.mongodb.net/UserDetails?retryWrites=true&w=majority&appName=Cluster0";
@@ -56,6 +72,16 @@ app.use(
     },
   })
 );
+
+// Error Route: Catch other errors
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).render("error", {
+    title: "Server Error - PSUEats",
+    errorCode: 500,
+    errorMessage: "Something went wrong on our end. Please try again later.",
+  });
+});
 
 //About us
 app.get("/AboutUs", async (req, res) => {
@@ -94,6 +120,7 @@ app.post("/user-signup", async (req, res) => {
       email,
       phoneNum,
       password: hashedPassword,
+      psueatsPoints: 100,
     });
 
     await newUser.save();
@@ -130,6 +157,7 @@ app.post("/user-login", async (req, res) => {
     req.session.role = user.role;
     req.session.name = user.name;
     req.session.email = user.email;
+    req.session.psueatsPoints = user.psueatsPoints;
 
     res.sendFile(path.join(__dirname, "UserHomepage.html"));
   } catch (err) {
@@ -364,7 +392,32 @@ app.delete("/rejectShopOwner/:id", isAdmin, async (req, res) => {
   }
 });
 
-/*// Route to insert data into MongoDB
+// Update points route at admin dashboard
+app.put("/update-points/:userId", async (req, res) => {
+  const { userId } = req.params;
+  const { psueatsPoints } = req.body;
+
+  try {
+    // Find the user and update the points
+    const user = await User.findById(userId);
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    // Update the points
+    user.psueatsPoints = psueatsPoints;
+    await user.save();
+
+    res.json({ success: true, message: "Points updated successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Error updating points" });
+  }
+});
+
+/*// An Old Route to insert data into MongoDB
 app.get("/insert-restaurants", async (req, res) => {
   try {
     // Ensure this code is not called multiple times without checking if data already exists
@@ -399,6 +452,7 @@ app.get("/ownerProfile", (req, res) => {
       res.status(500).send("Failed to retrieve profile.");
     });
 });
+
 //owner update profile
 app.post("/update-profile", isAuthenticated, async (req, res) => {
   const { name, phoneNum } = req.body; // Extract data from the request body
@@ -569,6 +623,23 @@ app.post("/checkout", isAuthenticated, async (req, res) => {
     if (paymentMethod === "pay on pick up") {
       return res.redirect(`/order-confirmation?id=${order._id}`);
     }
+    if (paymentMethod === "psueats points") {
+      const totalPriceNum = parseFloat(totalPrice);
+
+      if (user.psueatsPoints < totalPriceNum) {
+        return res.status(400).json({ error: "Insufficient PSUEats Points." });
+      }
+      if (isNaN(totalPriceNum)) {
+        return res.status(400).json({ error: "Invalid total price." });
+      }
+      user.psueatsPoints -= totalPriceNum;
+      order.paymentStatus = "Paid";
+      await order.save();
+
+      await user.save();
+
+      return res.redirect(`/order-confirmation?id=${order._id}`);
+    }
   } catch (error) {
     console.error("Error during checkout:", error);
     res.status(500).json({ success: false, message: "Checkout failed", error });
@@ -701,17 +772,6 @@ app.post("/delete-order", isAuthenticated, async (req, res) => {
   }
 });
 
-// Set up storage configuration for multer
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/"); // Directory where files will be saved
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname)); // Append timestamp to filename
-  },
-});
-const upload = multer({ storage: storage });
-
 app.post(
   "/modify-food-item",
   isAuthenticated,
@@ -768,6 +828,7 @@ app.post(
   }
 });
 */
+
 // Route to update order status
 app.post("/update-status/:id", isAuthenticated, async (req, res) => {
   try {
@@ -789,6 +850,370 @@ app.post("/update-status/:id", isAuthenticated, async (req, res) => {
   } catch (error) {
     console.error("Error updating order status:", error);
     return res.status(500).send("Error updating order status.");
+  }
+});
+
+app.get("/user-info", async (req, res) => {
+  try {
+    const user = await User.findOne({ email: req.session.email });
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    res.json({ psueatsPoints: user.psueatsPoints });
+  } catch (error) {
+    console.error("Error fetching user info:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// Route to add a food item to a restaurant
+app.post("/add-food-item/:restaurantId", async (req, res) => {
+  const { restaurantId } = req.params;
+  const { dishname, dishPic, price, calories, ownerId } = req.body;
+
+  if (!dishname || !price || !ownerId) {
+    return res.status(400).send("Dish name, price, and owner ID are required.");
+  }
+
+  try {
+    // Find the restaurant by ID and ownerId to ensure the owner can only modify their restaurant
+    const restaurant = await Restaurant.findOne({ _id: restaurantId, ownerId });
+
+    if (!restaurant) {
+      return res
+        .status(404)
+        .send(
+          "Restaurant not found or you do not have permission to add items."
+        );
+    }
+
+    // Create the food item
+    const newFoodItem = {
+      dishname,
+      dishPic,
+      price,
+      calories,
+    };
+
+    // Push the new food item to the food array
+    restaurant.food.push(newFoodItem);
+    await restaurant.save();
+
+    res.status(201).send("Food item added successfully!");
+  } catch (error) {
+    console.error("Error adding food item:", error);
+    res.status(500).send("Failed to add food item.");
+  }
+});
+
+app.get("/owner/restaurants", async (req, res) => {
+  const shopOwnerName = req.query.name; // Assuming you are passing the owner's name as a query parameter
+  if (!shopOwnerName) {
+    return res.status(400).json({ message: "Shop owner name is required." });
+  }
+
+  try {
+    // Find the shop owner
+    const shopOwner = await ShopOwner.findOne({ name: shopOwnerName });
+    if (!shopOwner) {
+      return res.status(404).json({ message: "Shop owner not found." });
+    }
+
+    // Fetch restaurants associated with this shop owner
+    const restaurants = await Restaurant.find({ ownerId: shopOwner._id }); // Use ownerId from ShopOwner
+
+    res.json(restaurants);
+  } catch (error) {
+    console.error("Error fetching restaurants:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+app.get("/restaurants/:name", async (req, res) => {
+  try {
+    const { name } = req.params;
+    const restaurants = await Restaurant.find({ name }).populate("name");
+    res.json(restaurants);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching restaurants", error });
+  }
+});
+
+//get Menu Managment Page
+app.get("/menuMgmnt", async (req, res) => {
+  try {
+    // Step 1: Find the ShopOwner by the logged-in session
+    const owner = await ShopOwner.findById(req.session.userId);
+    if (!owner) {
+      return res.status(404).send("Shop owner not found.");
+    }
+
+    // Step 2: Find the restaurant that matches the shop owner's name
+    const restaurant = await Restaurant.findOne({
+      title: { $regex: `^${owner.name.trim()}$`, $options: "i" },
+    }).populate("food"); // Populate the 'food' array to get the menu items
+
+    if (!restaurant) {
+      return res.status(404).send("Restaurant not found.");
+    }
+
+    // Step 3: Send the restaurant data and its menu items to the view
+    res.render("menuMgmnt", { restaurant, items: restaurant.food });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("An error occurred while retrieving the restaurant.");
+  }
+});
+
+// =======================================
+// New Item Adding
+// =======================================
+app.post("/menuMgmnt", async (req, res) => {
+  const { dishname, dishPic, price, calories } = req.body;
+
+  try {
+    // Step 1: Find the shop owner by the logged-in session
+    const owner = await ShopOwner.findById(req.session.userId);
+    if (!owner) {
+      return res.status(404).send("Shop owner not found.");
+    }
+
+    // Step 2: Find the restaurant by its title (matching the shop owner's name)
+    const restaurant = await Restaurant.findOne({
+      title: { $regex: `^${owner.name.trim()}$`, $options: "i" },
+    });
+
+    if (!restaurant) {
+      return res.status(404).send("Restaurant not found.");
+    }
+
+    // Step 3: Create the new menu item (dish)
+    const newItem = {
+      dishname,
+      dishPic,
+      price,
+      calories,
+    };
+
+    // Step 4: Add the new item to the restaurant's food array
+    restaurant.food.push(newItem);
+
+    // Step 5: Save the updated restaurant document
+    await restaurant.save();
+
+    console.log(newItem); // Log the new item
+
+    // Step 6: Reload the restaurant data and render the menu management page
+    res.render("menuMgmnt", { restaurant, items: restaurant.food });
+  } catch (err) {
+    console.error("Error during adding item:", err);
+    res.status(500).send("Adding item failed. Please try again.");
+  }
+});
+
+// open the adding item form:
+app.get("/addingItem", (req, res) => {
+  if (!req.session.userId) {
+    return res.status(401).send("owner not logged in.");
+  }
+
+  ShopOwner.findById(req.session.userId)
+    .then((user) => {
+      if (!user) {
+        return res.status(404).send("User not found.");
+      }
+      res.render("addingItem", { user }); // Use a template engine like EJS
+    })
+    .catch((err) => {
+      console.error("Error fetching shop menu", err);
+      res.status(500).send("Failed to retrieve shop menu.");
+    });
+});
+
+app.post("/addingItem", upload.single("dishPic"), async (req, res) => {
+  const { dishname, price, calories, isActive, newPrice, description } =
+    req.body;
+  const dishPic = req.file.path; // Path to the uploaded image
+
+  try {
+    // Step 1: Find the ShopOwner by the logged-in session
+    const owner = await ShopOwner.findById(req.session.userId);
+    if (!owner) {
+      return res.status(404).send("Shop owner not found.");
+    }
+
+    // Step 2: Find the restaurant whose title matches the shop owner's name
+    const restaurant = await Restaurant.findOne({
+      title: { $regex: `^${owner.name.trim()}$`, $options: "i" },
+    });
+
+    // If no restaurant is found, return an error
+    if (!restaurant) {
+      return res
+        .status(404)
+        .send("Restaurant not found with the given shop owner name.");
+    }
+
+    // Step 3: Check if the `ownerId` is set correctly in the restaurant document
+    if (!restaurant.ownerId) {
+      restaurant.ownerId = owner._id; // Set the `ownerId` field if it's missing
+    }
+
+    // Step 4: Prepare the offer object
+    let offer = {};
+    if (isActive === "true") {
+      if (!newPrice || !description) {
+        return res
+          .status(400)
+          .send("Offer is active, but newPrice and description are required.");
+      }
+
+      offer = {
+        isActive: true,
+        newPrice: Number(newPrice), // Make sure it's a number
+        description,
+      };
+    } else {
+      offer = {
+        isActive: false,
+      };
+    }
+
+    // Step 5: Create the new food item
+    const newItem = {
+      dishname,
+      dishPic, // Save the path to the uploaded image
+      price,
+      calories,
+      offer, // Include the offer object
+    };
+
+    // Step 6: Add the new food item to the food array of the restaurant
+    restaurant.food.push(newItem);
+
+    // Step 7: Save the updated restaurant document
+    await restaurant.save();
+
+    // Step 8: Redirect to the menu management page (or render a success message)
+    res.redirect("/menuMgmnt");
+  } catch (err) {
+    console.error("Error during adding item:", err);
+    res.status(500).send("Failed to add item. Please try again.");
+  }
+});
+
+//Offers
+app.get("/Offers", async (req, res) => {
+  try {
+    // Step 1: Find the ShopOwner by the logged-in session
+    const owner = await ShopOwner.findById(req.session.userId);
+    if (!owner) {
+      return res.status(404).send("Shop owner not found.");
+    }
+
+    // Step 2: Find the restaurant that matches the shop owner's name
+    const restaurant = await Restaurant.findOne({
+      title: { $regex: `^${owner.name.trim()}$`, $options: "i" },
+    }).populate("food"); // Populate the 'food' array to get the menu items
+
+    if (!restaurant) {
+      return res.status(404).send("Restaurant not found.");
+    }
+
+    // Step 3: Send the menu items to the view
+    res.render("Offers", { restaurant, items: restaurant.food });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("An error occurred while retrieving the restaurant.");
+  }
+});
+
+// Route to update an existing offer
+app.post("/addOffer", async (req, res) => {
+  const { newPrice, offerDetails } = req.body;
+
+  try {
+    // Step 1: Find the ShopOwner by the logged-in session
+    const owner = await ShopOwner.findById(req.session.userId);
+    if (!owner) {
+      return res.status(404).send("Shop owner not found.");
+    }
+
+    // Step 2: Find the restaurant whose title matches the shop owner's name
+    const restaurant = await Restaurant.findOne({
+      title: { $regex: `^${owner.name.trim()}$`, $options: "i" },
+    });
+
+    if (!restaurant) {
+      return res
+        .status(404)
+        .send("Restaurant not found with the given shop owner name.");
+    }
+
+    // Step 3: Find the food item by its dishname (instead of _id)
+    const foodItem = restaurant.food.find(
+      (item) => item.dishname === req.body.dishname
+    );
+
+    if (!foodItem) {
+      return res.status(404).send("Food item not found.");
+    }
+
+    // Step 4: Update the offer
+    if (isActive === "true") {
+      if (!newPrice || !offerDetails) {
+        return res
+          .status(400)
+          .send("Offer is active, but newPrice and offerDetails are required.");
+      }
+
+      foodItem.offer = {
+        isActive: true,
+        newPrice: Number(newPrice),
+        offerDetails,
+      };
+    } else {
+      foodItem.offer = {
+        isActive: false,
+      };
+    }
+
+    // Step 5: Save the updated restaurant document
+    await restaurant.save();
+
+    // Step 6: Respond with success or redirect
+    res.redirect("/menuMgmnt");
+  } catch (err) {
+    console.error("Error updating offer:", err);
+    res.status(500).send("Failed to update offer. Please try again.");
+  }
+});
+
+app.post("/submitReview", async (req, res) => {
+  try {
+    const { ratingFood, ratingService, feedback, selectedShop } = req.body;
+
+    const newReview = new Review({
+      ratingFood,
+      ratingService,
+      feedback,
+      selectedShop,
+    });
+
+    await newReview.save();
+    res.status(200).send({ message: "Review submitted successfully!" });
+  } catch (error) {
+    console.error("Error saving review:", error);
+    res.status(500).send({ error: "Failed to submit review." });
+  }
+});
+
+app.get("/get-all-reviews", async (req, res) => {
+  try {
+    const reviews = await Review.find(); // Assuming you have a `ReviewModel`
+    res.json(reviews);
+  } catch (error) {
+    console.error("Error fetching reviews:", error);
+    res.status(500).send("Error fetching reviews");
   }
 });
 

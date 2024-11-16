@@ -4,10 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dofaa Restaurant Menu</title>
+    <title><%= restaurant.name %> Menu</title> <!-- Dynamic Restaurant Name -->
     <script src="https://kit.fontawesome.com/6991b496f2.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="style.css">
     <style>
+        /* Your CSS styles will remain the same */
         body {
             font-family: Arial, sans-serif;
             background-color: #f3f4f6;
@@ -25,7 +26,6 @@
             align-items: center;
             gap: 15px;
             flex-wrap: wrap;
-            /* Allows wrapping on smaller screens */
         }
 
         header h1 {
@@ -49,7 +49,6 @@
             color: white;
             text-decoration: none;
             transition: background-color 0.3s;
-            text-decoration: none;
             font-size: 1rem;
         }
 
@@ -62,11 +61,8 @@
             color: white;
             text-decoration: none;
             transition: background-color 0.3s;
-            text-decoration: none;
             font-size: 1rem;
         }
-
-
 
         .cart-icon {
             position: relative;
@@ -87,74 +83,32 @@
         }
 
         .search-bar {
+            margin: 20px 0;
             display: flex;
-            align-items: center;
             justify-content: center;
-            gap: 10px;
-            padding: 15px 20px;
-            background-color: #f4f4f4;
-            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            margin-bottom: 20px;
         }
 
-        /* Styling for the search input */
-        .search-bar input[type="text"] {
-            padding: 10px 15px;
-            font-size: 16px;
+        .search-bar input {
+            width: 60%;
+            padding: 10px;
             border-radius: 5px;
-            border: 1px solid #ddd;
-            width: 250px;
-            transition: border-color 0.3s ease;
+            border: 1px solid #ccc;
+            margin-right: 10px;
             background-color: white;
         }
 
-        .search-bar input[type="text"]:hover {
-            border-color: #555;
-        }
-
-        .search-bar input[type="text"]:focus {
-            border-color: #979797;
-            box-shadow: #ababab 3px 3px 3px;
-            outline: none;
-        }
-
-        /* Styling for the sort dropdown */
-        .search-bar select {
-            padding: 10px 12px;
-            font-size: 16px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            background-color: #fff;
-            cursor: pointer;
-            transition: border-color 0.3s ease;
-        }
-
-        .search-bar select:focus {
-            border-color: #979797;
-            outline: none;
-        }
-
-        /* Styling for the search and reset buttons */
         .search-bar button {
-            padding: 10px 15px;
-            font-size: 16px;
-            font-weight: bold;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-
-            background-color: #efb300;
-            color: #fff;
-            transition: 0.3s ease;
-
+            transition: background-color 0.3s;
         }
 
         .search-bar button:hover {
-            background-color: #b88b01;
-            color: #fff;
-            transition: 0.3s ease;
-
+            background-color: #218838;
         }
 
         #menu-container {
@@ -170,13 +124,13 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             padding: 20px;
             text-align: center;
-            height: 100%;
+            height: auto;
         }
 
         .menu-item img {
             width: 100%;
-            height: 60%;
-            object-fit: fill;
+            height: 200px;
+            object-fit: cover;
             border-radius: 10px;
         }
 
@@ -203,34 +157,6 @@
             color: #555;
         }
 
-        .quantity-controls {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            /* Space between buttons and input */
-            margin-top: 10px;
-        }
-
-        .quantity-controls button {
-            background-color: #1d3557;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        .quantity-controls input {
-            width: 50px;
-            text-align: center;
-            font-size: 16px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 5px;
-        }
-
         .quantity-controls button:hover {
             background-color: #16324f;
         }
@@ -252,7 +178,7 @@
 
 <body>
     <header>
-        <h1>Dofaa Restaurant Menu</h1>
+        <h1><%= restaurant.name %> Menu</h1> <!-- Dynamic Restaurant Name -->
         <nav>
             <a href="/home">Home</a>
             <a href="/logout">Logout</a>
@@ -265,29 +191,24 @@
     <div class="search-bar">
         <input type="text" id="searchInput" placeholder="Search for dishes...">
         <button onclick="searchMenu()">Search</button>
-        <select id="sortOptions" onchange="sortMenu()">
-            <option value="default">Sort By</option>
-            <option value="price-low">Price: Low to High</option>
-            <option value="price-high">Price: High to Low</option>
-            <option value="alpha">A-Z</option>
-        </select>
     </div>
 
     <div id="menu-container">
         <!-- Menu items will be dynamically inserted here -->
     </div>
+    <hr>
 
     <footer>
-        &copy; 2024 Dofaa Restaurant. All rights reserved.
+        &copy; 2024 <%= restaurant.name %>. All rights reserved. <!-- Dynamic Restaurant Name -->
     </footer>
 
     <script>
         let allMenuItems = []; // Store all menu items globally
-        let cart = JSON.parse(sessionStorage.getItem('cart')) || {}; // Initialize cart from sessionStorage
+        let cart = JSON.parse(localStorage.getItem('cart')) || {}; // Initialize cart from localStorage
 
         async function fetchMenuItems() {
             try {
-                const response = await fetch('/get-menu-items?restaurant=Dofaa Cafe');
+                const response = await fetch(`/get-menu-items?restaurant=<%= restaurant.name %>`); <!-- Dynamic Restaurant -->
                 if (!response.ok) throw new Error('Failed to fetch menu items');
                 allMenuItems = await response.json();
                 displayMenu(allMenuItems);
@@ -329,28 +250,27 @@
             if (currentQuantity > 0) {
                 cart[dishname] = currentQuantity;
 
-                // Store price and image URL in sessionStorage
+                // Store price and image URL in localStorage
                 const item = allMenuItems.find(item => item.dishname === dishname);
                 if (item) {
-                    const priceData = JSON.parse(sessionStorage.getItem('priceData')) || {};
-                    const imageData = JSON.parse(sessionStorage.getItem('imageData')) || {};
-                    const shopData = JSON.parse(sessionStorage.getItem('shopData')) || {};
+                    const priceData = JSON.parse(localStorage.getItem('priceData')) || {};
+                    const imageData = JSON.parse(localStorage.getItem('imageData')) || {};
+                    const shopData = JSON.parse(localStorage.getItem('shopData')) || {};
 
                     priceData[dishname] = item.price; // Store price
                     imageData[dishname] = item.dishPic; // Store image URL
-                    shopData[dishname] = "Dofaa Cafe"; // Store the shop name
-                    sessionStorage.setItem('shopData', JSON.stringify(shopData));
-                    sessionStorage.setItem('priceData', JSON.stringify(priceData));
-                    sessionStorage.setItem('imageData', JSON.stringify(imageData));
+                    shopData[dishname] = "<%= restaurant.name %>"; // Store the shop name
+                    localStorage.setItem('shopData', JSON.stringify(shopData));
+                    localStorage.setItem('priceData', JSON.stringify(priceData));
+                    localStorage.setItem('imageData', JSON.stringify(imageData));
                 }
             } else {
                 delete cart[dishname];
             }
 
-            sessionStorage.setItem('cart', JSON.stringify(cart)); // Save cart to sessionStorage
+            localStorage.setItem('cart', JSON.stringify(cart)); // Save cart to localStorage
             updateCart();
         }
-
 
         function updateCart() {
             const cartCount = Object.values(cart).reduce((sum, qty) => sum + qty, 0);
@@ -358,9 +278,9 @@
         }
 
         function viewCart() {
-
             window.location.href = 'cart.html';
         }
+
         function searchMenu() {
             const query = document.getElementById('searchInput').value.toLowerCase();
             const filteredItems = allMenuItems.filter(item =>
@@ -368,29 +288,13 @@
             );
             displayMenu(filteredItems);
         }
-        function sortMenu() {
-            const sortOption = document.getElementById('sortOptions').value;
-
-            let sortedMenuItems = [...allMenuItems]; // Create a copy of the menu items
-
-            if (sortOption === "price-low") {
-                // Sort by price (Low to High)
-                sortedMenuItems.sort((a, b) => a.price - b.price);
-            } else if (sortOption === "price-high") {
-                // Sort by price (High to Low)
-                sortedMenuItems.sort((a, b) => b.price - a.price);
-            } else if (sortOption === "alpha") {
-                // Sort alphabetically by dish name (A-Z)
-                sortedMenuItems.sort((a, b) => a.dishname.localeCompare(b.dishname));
-            }
-            displayMenu(sortedMenuItems); // Display sorted items
-        }
 
         window.onload = () => {
             fetchMenuItems();
             updateCart(); // Sync cart on page load
         };
     </script>
+
 </body>
 
 </html>

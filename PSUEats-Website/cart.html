@@ -390,10 +390,11 @@
             <label for="payment-method">Choose Payment Method:</label>
             <select id="payment-method">
                 <option value="pay on pick up">Pay on Pick Up</option>
+                <option value="psueats points">PSUEats Points</option>
                 <option value="online">Online</option>
             </select>
         </div>
-
+        <p id="points" style="display: none;">Your PSUEats Points: <span id="points-available">0</span></p>
         <!-- Scheduling Pickup Time -->
         <div class="pickup-schedule">
             <label for="pickup-time">⏰ Schedule Pickup Time:</label>
@@ -437,11 +438,11 @@
         const confirmYesButton = document.getElementById('confirm-yes');
         const confirmNoButton = document.getElementById('confirm-no');
 
-        document.getElementById('checkout-button').addEventListener('click', () => {
+        document.getElementById('checkout-button').addEventListener('click', async () => {
             const cart = JSON.parse(sessionStorage.getItem('cart')) || {};
             const pickupTime = pickupInput.value;
             const paymentMethod = document.getElementById('payment-method').value;
-
+            const totalPrice = parseFloat(document.getElementById('total-price').textContent.split(": ")[1]);
             if (Object.keys(cart).length === 0) {
                 showError("Your cart is empty. Please add items to your cart before checking out.");
                 return;
@@ -455,10 +456,23 @@
             const pickupDate = new Date(pickupTime);
             const pickupHour = pickupDate.getHours();
             const pickupMinutes = pickupDate.getMinutes();
+            const pointsSection = document.getElementById('points');
 
             if ((pickupHour < 7 || (pickupHour === 7 && pickupMinutes < 30)) || (pickupHour > 16 || (pickupHour === 16 && pickupMinutes > 30))) {
                 showError("Please select a pickup time between 7:30 AM and 4:30 PM.");
                 return;
+            }
+            if (paymentMethod === 'psueats points') {
+                pointsSection.style.display = 'block';
+                const response = await fetch('/user-info', { method: 'GET' });
+                const data = await response.json();
+
+                if (data.psueatsPoints < totalPrice) {
+                    showError("Insufficient PSUEats Points. Please select another payment method.");
+                    return;
+                }
+            } else {
+                pointsSection.style.display = 'none';
             }
 
             modal.style.display = 'block';
@@ -601,6 +615,27 @@
             sessionStorage.setItem('cart', JSON.stringify(cart));
             displayCart();
         }
+
+        document.getElementById('payment-method').addEventListener('change', async (event) => {
+            const paymentMethod = event.target.value;
+            const pointsSection = document.getElementById('points');
+            const pointsAvailable = document.getElementById('points-available');
+
+            if (paymentMethod === 'psueats points') {
+                pointsSection.style.display = 'block';
+                try {
+                    const response = await fetch('/user-info', { method: 'GET' });
+                    const data = await response.json();
+                    pointsAvailable.textContent = data.psueatsPoints || 0;
+                } catch (error) {
+                    console.error('Error fetching PSUEats Points:', error);
+                    showError("Failed to retrieve PSUEats Points. Please try again.");
+                }
+            } else {
+                pointsSection.style.display = 'none';
+            }
+        });
+
 
         window.onload = () => {
             setMinMaxTime();

@@ -18,6 +18,7 @@ const UserSchema = new mongoose.Schema(
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
     orders: [{ type: mongoose.Schema.Types.ObjectId, ref: "Order" }],
+    psueatsPoints: { type: Number, defualt: 100 },
   },
   { minimize: false }
 );

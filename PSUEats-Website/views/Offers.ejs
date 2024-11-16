@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Manage Offers</title>
+    <script src="https://kit.fontawesome.com/6991b496f2.js" crossorigin="anonymous"></script>
+    <script src="../server.js"></script>
+    <style>
+        /* General Styles for Offers Management Page */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #004080;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+
+        nav {
+            display: flex;
+            gap: 20px;
+        }
+
+        nav a, nav button {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            background-color: #48535f;
+            transition: background-color 0.3s;
+        }
+
+        nav a:hover, nav button:hover {
+            background-color: darkorange;
+        }
+
+        .container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .offers-management {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 24px;
+            color: #004080;
+        }
+
+        #offersList {
+            margin-top: 20px;
+        }
+
+        .offer-item {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .offer-item form {
+            margin-top: 10px;
+        }
+
+        .offer-item label {
+            display: block;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .offer-item input,
+        .offer-item textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .offer-item button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .offer-item button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Add the search bar style */
+        #searchBar {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>PSUEats</h1>
+        <nav>
+            <button onclick="window.location.href='/ownerProfile';">Profile</button>
+            <button onclick="window.location.href='/dashboard';">Dashboard</button>
+            <button onclick="window.location.href='/manageOffers';">Manage Offers</button>
+            <a href="/Logout">Logout</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="offers-management">
+            <h2>Manage Offers</h2>
+
+            <!-- Search Bar -->
+            <input type="text" id="searchBar" placeholder="Search by item name..." onkeyup="filterOffers()">
+
+            <div id="offersList">
+                <% items.forEach(item => { %>
+                    <div class="offer-item" data-dishname="<%= item.dishname.toLowerCase() %>">
+                       <p><strong>Dish Name:</strong> <%= item.dishname %></p> 
+                        <p><strong>Price:</strong> $<%= item.price %></p>
+                        <p><strong>Current Offer Price:</strong> $<%= item.offerPrice || 'N/A' %></p>
+                        
+                        <form action="/addOffer" method="POST">
+                            <label for="offerPrice">Offer Price:</label>
+                            <input type="number" name="offerPrice" id="offerPrice" value="<%= item.offerPrice || item.price %>" step="0.01" required>
+                            
+                            <label for="offerDetails">Offer Details:</label>
+                            <textarea name="offerDetails" id="offerDetails" placeholder="Details about the offer" required><%= item.offerDetails || '' %></textarea>
+                            
+                            <button type="submit">Update Offer</button>
+                        </form>
+                    </div>
+                <% }) %>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to filter offers based on search query
+        function filterOffers() {
+            const searchQuery = document.getElementById('searchBar').value.toLowerCase();
+            const offerItems = document.querySelectorAll('.offer-item');
+
+            offerItems.forEach(item => {
+                const dishname = item.getAttribute('data-dishname');
+                if (dishname.includes(searchQuery)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

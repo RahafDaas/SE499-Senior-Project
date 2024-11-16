@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* General Reset */
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: white;
+            color: white;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+        }
+
+        /* Error Page Layout */
+        .error-page {
+            text-align: center;
+            position: relative;
+        }
+
+        /* Centralized Content */
+        .error-page .container {
+            z-index: 1;
+            /* Ensures content is above the video */
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .error-page h1 {
+            font-size: 3rem;
+            color: black;
+            margin: 0;
+            font-weight: bold;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
+        }
+
+        .error-page h2 {
+            font-size: 1.5rem;
+            color: black;
+            margin: 10px 0;
+        }
+
+        .error-page p {
+            font-size: 1rem;
+            color: #b0b0b0;
+            margin-bottom: 20px;
+        }
+
+        .home-button {
+            display: inline-block;
+            padding: 10px 25px;
+            font-size: 1rem;
+            color: white;
+            background-color: #4caf50;
+            border-radius: 25px;
+            text-decoration: none;
+            transition: background-color 0.3s ease-in-out, transform 0.2s;
+        }
+
+        .home-button:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+
+        /* Video Styling */
+        .video-container {
+            position: relative;
+            width: 70%;
+            /* Adjust video width as needed */
+            margin: 0 auto;
+        }
+
+        .error-video {
+            width: 100%;
+            /* Scale video to container width */
+            border-radius: 15px;
+            /* Optional: Adds rounded corners to the video */
+        }
+    </style>
+    <title>Page Not Found</title>
+</head>
+
+<body>
+    <div class="error-page">
+        <div class="container">
+            <h1>Oops! Lost in Space</h1>
+            <h2>We can't seem to find the page you're looking for.</h2>
+            <p>The page may have moved, or you might have mistyped the URL.</p>
+        </div>
+        <div class="video-container">
+            <video class="error-video" autoplay loop muted>
+                <source src="../images/lost-in-space.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+    </div>
+</body>
+
+</html>

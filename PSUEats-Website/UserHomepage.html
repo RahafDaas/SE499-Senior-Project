@@ -17,10 +17,11 @@
 
         body {
             overflow-x: hidden;
+            width: 90%;
         }
 
         .main-menus {
-            width: 100%;
+            width: 90%;
             height: auto;
             margin-right: 20px;
         }
@@ -46,6 +47,7 @@
             max-height: 300px;
             padding: 1rem;
             gap: 1rem;
+            width: 90%;
         }
 
         .highlight-card {
@@ -114,6 +116,142 @@
                 margin: 5px;
             }
         }
+
+        /* Reviews Section */
+        .reviews-section {
+            margin: 10px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            width: 90%;
+        }
+
+        .reviews-section h3 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #333;
+        }
+
+        .review-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .review-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .review-card p {
+            margin: 8px 0;
+            font-size: 1rem;
+            color: #555;
+        }
+
+        .review-card p strong {
+            color: #333;
+        }
+
+        /* Responsive Design */
+        @media screen and (max-width: 768px) {
+            .reviews-section h3 {
+                font-size: 1.5rem;
+            }
+
+            .review-card {
+                padding: 10px;
+            }
+        }
+
+
+        /* Reviews Section */
+        .reviews-section {
+            margin: 10px auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            max-width: 100%;
+            /* Ensure it does not overflow the viewport */
+            box-sizing: border-box;
+        }
+
+
+        #reviews-list {
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 1rem;
+            overflow-x: auto;
+            padding: 10px 0;
+            scroll-snap-type: x mandatory;
+        }
+
+        .reviews-list {
+            display: flex;
+            gap: 1rem;
+            /* Add spacing between reviews */
+            flex-wrap: nowrap;
+            /* Keep all reviews in a single row */
+            overflow-x: auto;
+            /* Enable horizontal scrolling for overflow */
+            padding: 0.5rem 0;
+            justify-content: flex-start;
+            /* Align all reviews to the left */
+            align-items: flex-start;
+            /* Align items to the top if heights vary */
+        }
+
+        .review-card {
+            flex: 0 0 auto;
+            /* Prevent stretching */
+            background-color: rgb(250, 224, 183);
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            min-width: 300px;
+            flex-shrink: 0;
+            scroll-snap-align: start;
+            transition: transform 0.3s;
+        }
+
+        .review-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .review-card p {
+            margin: 8px 0;
+            font-size: 1rem;
+            color: #555;
+        }
+
+        .review-card p strong {
+            color: #333;
+        }
+
+        .highlight-wrapperr {
+            width: 90%;
+            align-items: left;
+            margin: 0px;
+        }
+
+        .main-navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            /* Light background */
+            padding: 10px 20px;
+            margin-right: 20px;
+        }
+
+        .user {
+            margin-right: 100px;
+        }
     </style>
 </head>
 
@@ -138,6 +276,7 @@
                 <button class="searchbar-btn" onclick="searchRestaurants()">Search</button>
             </div>
             <div class="userProfile">
+                <div id="psueats-points">Points: <span id="points-value"></span></div>
                 <div class="cart-icon" onclick="viewCart()">
                     🛒 <span id="cartCount">0</span>
                 </div>
@@ -146,14 +285,7 @@
             </div>
         </div>
 
-        <div class="main-highlight">
-            <div class="main-header">
-                <h2 class="main-title">Our Recommendations</h2>
-                <div class="highlight-wrapper" id="recommendation-list">
-                    <!-- Recommendations will be dynamically inserted -->
-                </div>
-            </div>
-        </div>
+
 
         <div class="main-menus">
             <div class="main-detail">
@@ -163,6 +295,20 @@
                 </div>
             </div>
         </div>
+        <br>
+
+        <!-- Display reviews for each restaurant -->
+        <div class="highlight-wrapperr">
+            <!-- Cards will go here -->
+            <div class="reviews-section" id="reviews-section">
+                <h3>Reviews</h3>
+                <div id="reviews-list">
+                    <!-- Reviews will be dynamically inserted -->
+                </div>
+            </div>
+        </div>
+
+
         <footer>
             &copy; 2024 PSUEATS. All rights reserved.
         </footer>
@@ -291,11 +437,58 @@
             function viewCart() {
                 window.location.href = 'cart.html';
             }
+            async function fetchUserInfo() {
+                try {
+                    const response = await fetch('/user-info');
+                    if (!response.ok) throw new Error('Failed to fetch user info');
+
+                    const data = await response.json();
+                    // Update the points and other user-related details
+                    document.getElementById('points-value').textContent = data.psueatsPoints || 0;
+                } catch (error) {
+                    console.error('Error fetching user info:', error);
+                }
+            }
+
+            // Fetch all reviews
+            async function fetchAllReviews() {
+                try {
+                    const response = await fetch('/get-all-reviews');  // Endpoint to fetch all reviews
+                    if (!response.ok) throw new Error('Failed to fetch reviews');
+                    const reviews = await response.json();  // Assuming the response is an array of reviews
+                    displayReviews(reviews);
+                } catch (error) {
+                    console.error('Error fetching all reviews:', error);
+                }
+            }
+
+            // Function to display all reviews
+            function displayReviews(reviews) {
+                const reviewsSection = document.getElementById('reviews-list');
+                reviewsSection.innerHTML = '';  // Clear any previous reviews
+
+                reviews.forEach(review => {
+                    const reviewCard = document.createElement('div');
+                    reviewCard.className = 'review-card';
+                    reviewCard.innerHTML = `
+            <p><strong>Restaurant:</strong> ${review.selectedShop}</p>
+            <p><strong>Food Rating:</strong> ${review.ratingFood}</p>
+            <p><strong>Service Rating:</strong> ${review.ratingService}</p>
+            <p><strong>Feedback:</strong> ${review.feedback}</p>
+        `;
+                    reviewsSection.appendChild(reviewCard);
+                });
+            }
+
+
+
 
             // Fetch and display restaurants on page load
             window.onload = () => {
                 fetchRestaurants();
                 updateCart(); // Sync cart on page load
+                fetchUserInfo(); // Fetch user info and points
+                fetchAllReviews();
             };
         </script>
 
