@@ -68,6 +68,10 @@
         .status-actions {
             margin-top: 20px;
             text-align: center;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            gap: 2%;
         }
 
         #update-status-btn {
@@ -83,6 +87,19 @@
             background-color: #0056b3;
         }
 
+        #review-order-btn {
+            padding: 10px 20px;
+            background-color: #efb300;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #review-order-btn:hover {
+            background-color: #d39f02;
+        }
+
         /* Mobile-first responsive design */
         @media (max-width: 600px) {
             .order-container {
@@ -95,6 +112,14 @@
 
             #update-status-btn {
                 width: 100%;
+            }
+
+            .status-actions {
+
+                flex-direction: column;
+
+                justify-content: center;
+                gap: 2%;
             }
         }
 

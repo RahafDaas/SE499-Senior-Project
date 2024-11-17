@@ -17,7 +17,7 @@
             /* Use flexbox to align items */
             justify-content: center;
             /* Center items horizontally */
-            margin-top: 20px;
+            margin-top: 30px;
             /* Add some space above the button */
         }
 
@@ -39,12 +39,20 @@
         <div class="Login_form">
             <h1 id="FormHead">Shop Owner Sign Up</h1>
             <div id="error"></div>
-            <form id="form" action="/shopowner-signup" method="POST" onsubmit="return showPendingMessage(event)">
+            <form id="form" action="/shopowner-signup" method="POST" enctype="multipart/form-data"
+                onsubmit="return showPendingMessage(event)">
                 <div class="inputSet">
                     <div class="inputFields" id="Username">
                         <i class="fa-solid fa-user"></i>
                         <input type="text" name="name" placeholder="Name" id="name" onkeyup="nameValidation()" required>
                         <span id="nameError" class="errorMseg"></span>
+                    </div>
+
+                    <div class="inputFields" id="Shopname">
+                        <i class="fa-solid fa-shop"></i>
+                        <input type="text" name="ShopName" placeholder="Shop Name" id="ShopName"
+                            onkeyup="ShopNameValidation()" required>
+                        <span id="ShopNameError" class="errorMseg"></span>
                     </div>
 
                     <div class="inputFields" id="PhoneNum">
@@ -67,36 +75,29 @@
                             onkeyup="passConfirmValidation()" required>
                         <span id="confirmationError" class="errorMseg"></span>
                     </div>
+
                     <div class="inputFields" id="IqamaID">
                         <i class="fa-solid fa-id-card"></i>
-                        <input type="text" name="iqamaID" placeholder="Iqama/National ID" id="iqamaID"
-                            onkeyup="iqamaValidation()" required>
-                        <span id="iqamaError" class="errorMseg"></span>
+                        <input type="file" name="iqamaID" placeholder="Iqama/National ID" id="iqamaID" required>
                     </div>
 
-                    <p style="display: block; margin: 20px; ">Already have a shop owner
-                        account? <a href="shopownerLogin.html">Login
-                            as Shop Owner</a></p>
-                    <p style="display: block; margin: 20px;">Admin? <a href="adminLogin.html">Login here</a>
-                    </p>
+                    <p style="display: block; margin: 20px; ">Already have a shop owner account? <a
+                            href="shopownerLogin.html">Login as Shop Owner</a></p>
+                    <p style="display: block; margin: 20px;">Admin? <a href="adminLogin.html">Login here</a></p>
                     <p class="userSignup" id="userSignup" style="display: block; margin: 20px;">Not Shop Owner? <a
                             href="index.html">Login as User</a></p>
                 </div>
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
+
+                <br><br><br><br><br><br><br><br><br>
+
                 <div class="field_btn">
                     <button type="submit" id="signup_btn">Sign Up</button>
                 </div>
             </form>
 
+
             <!-- Message Section -->
-            <div id="message" style="display:none; margin-top: 20px; color: green;"></div>
+            <div id="message" style="display:none; margin-top: 9px; color: green;"></div>
         </div>
     </div>
 
@@ -109,7 +110,7 @@
             // Perform the form submission using Fetch API
             fetch(form.action, {
                 method: form.method,
-                body: new URLSearchParams(new FormData(form)),
+                body: new FormData(form), // Send FormData directly
             })
                 .then(response => response.text())
                 .then(message => {
@@ -122,18 +123,7 @@
                     console.error('Error:', error);
                 });
         }
-        function iqamaValidation() {
-            const iqamaInput = document.getElementById("iqamaID");
-            const iqamaError = document.getElementById("iqamaError");
-            const iqamaValue = iqamaInput.value;
 
-            // Check if input is 10 digits long
-            if (/^\d{10}$/.test(iqamaValue)) {
-                iqamaError.textContent = "";  // Clear error if valid
-            } else {
-                iqamaError.textContent = "ID must be exactly 10 digits.";  // Show error if invalid
-            }
-        }
 
     </script>
     <script src="script.js"></script>

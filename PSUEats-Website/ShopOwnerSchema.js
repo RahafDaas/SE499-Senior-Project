@@ -2,19 +2,16 @@ const mongoose = require("mongoose");
 
 const ShopOwnerSchema = new mongoose.Schema({
   name: { type: String, unique: true, required: true },
+  ShopName: { type: String, unique: true, required: true },
   phoneNum: { type: String, unique: true },
   password: { type: String, required: true },
+
+  // iqamaID is now storing the path of the uploaded file
   iqamaID: {
     type: String,
-    required: true,
-    unique: true,
-    validate: {
-      validator: function (v) {
-        return /^\d{10}$/.test(v); // Ensures exactly 10 digits
-      },
-      message: "Iqama/National ID must be exactly 10 digits.",
-    },
+    required: true, // You can decide if this is required or not
   },
+
   role: { type: String, default: "shopowner" },
   isApproved: { type: Boolean, default: false }, // Approval status for shop owners
   createdAt: { type: Date, default: Date.now },

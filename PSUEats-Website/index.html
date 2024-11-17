@@ -84,6 +84,11 @@
                         In</button>
                 </div>
             </form>
+            <!-- Add this below the form or wherever appropriate -->
+            <div id="successMessage" style="display: none; color: green;">
+
+            </div>
+
         </div>
     </div>
     <script>
@@ -130,6 +135,43 @@
 
         }
 
+        const successMessage = document.getElementById('successMessage');
+
+        form.addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent form from refreshing the page
+
+            // Create an object to hold the form data
+            const formData = {
+                name: form.name.value,
+                email: form.email.value,
+                phoneNum: form.phoneNum.value,
+                password: form.password.value,
+                password2: form.password2.value
+            };
+
+            // Send the form data as JSON
+            fetch('/user-signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json' // Set the content type to JSON
+                },
+                body: JSON.stringify(formData) // Convert the object to JSON
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        successMessage.innerHTML = data.message;
+                        successMessage.style.display = 'block'; // Display success message
+                    }
+                })
+                .catch(error => {
+                    successMessage.innerHTML = 'Sign-up failed. Please try again.';
+                    successMessage.style.display = 'block'; // Display success message
+
+                    console.error('Error:', error);
+
+                });
+        });
     </script>
     <script src="script.js"></script>
 </body>

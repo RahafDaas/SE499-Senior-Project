@@ -344,6 +344,7 @@
                 <thead>
                     <tr>
                         <th>Name</th>
+                        <th>Shop Name</th>
                         <th>National ID / Iqama</th>
                         <th>Phone Number</th>
                         <th>Approval Status</th>
@@ -396,6 +397,7 @@
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td data-label="Name">${owner.name}</td>
+                    <td data-label="Name">${owner.ShopName}</td>
                     <td data-label="National ID / Iqama">${owner.iqamaID}</td>
                     <td data-label="Phone">${owner.phoneNum}</td>
                     <td data-label="Approval Status">${owner.isApproved ? 'Approved' : 'Pending'}</td>
@@ -480,6 +482,7 @@
         <table border="1" style=" border: 1px solid black; border-collapse: collapse;" border="1">
             <tr>
                 <th style="background-color: #066ab1; color: white">Name</th>
+                <th style="background-color: #066ab1; color: white">Shop Name</th>
                 <th style="background-color: #066ab1; color: white">National ID / Iqama</th>
                 <th style="background-color: #066ab1; color: white">Phone Number</th>
                 <th style="background-color: #066ab1; color: white">Approval Status</th>
@@ -495,6 +498,7 @@
             <td>${cells[2].textContent}</td>
             <td>${cells[3].textContent}</td>
             <td>${cells[4].textContent}</td>
+            <td>${cells[5].textContent}</td>
         </tr>`;
             });
 

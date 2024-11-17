@@ -104,6 +104,13 @@ app.post("/user-signup", async (req, res) => {
   const { name, email, phoneNum, password, password2 } = req.body;
 
   try {
+    // Ensure password and password2 are provided
+    if (!password || !password2) {
+      return res
+        .status(400)
+        .send("Password and confirmation password are required.");
+    }
+
     // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) return res.status(400).send("User already exists.");
@@ -112,9 +119,20 @@ app.post("/user-signup", async (req, res) => {
     if (password !== password2)
       return res.status(400).send("Passwords do not match.");
 
-    // Hash the password before saving
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // Ensure password is not empty
+    if (!password) {
+      return res.status(400).send("Password is required.");
+    }
 
+    // Hash the password before saving
+    const hashedPassword = await bcrypt.hash(password, 10); // 10 is the salt rounds
+
+    // Check if hashedPassword is correctly generated
+    if (!hashedPassword) {
+      return res.status(500).send("Error hashing password.");
+    }
+
+    // Create a new user
     const newUser = new User({
       name,
       email,
@@ -123,17 +141,21 @@ app.post("/user-signup", async (req, res) => {
       psueatsPoints: 100,
     });
 
+    // Save the user to the database
     await newUser.save();
+
     // Create session after signup
     req.session.userId = newUser._id;
     req.session.role = newUser.role;
 
-    res.sendFile(path.join(__dirname, "UserHomepage.html")); // Redirect to home page
+    // Send success response
+    res.status(200).json({ message: "Sign-up successful! Please log in." });
   } catch (err) {
     console.error("Error during signup:", err);
     res.status(500).send("Sign up failed. Please try again.");
   }
 });
+
 // =======================================
 // User Login Route
 // =======================================
@@ -169,40 +191,55 @@ app.post("/user-login", async (req, res) => {
 // =======================================
 // Shop Owner Signup Route
 // =======================================
-app.post("/shopowner-signup", async (req, res) => {
-  const { name, phoneNum, password, password2, iqamaID } = req.body;
+app.post("/shopowner-signup", upload.single("iqamaID"), async (req, res) => {
+  // Log to check if the file is uploaded
+  console.log("Uploaded file:", req.file);
+  console.log("Request Body:", req.body);
+
+  if (!req.file) {
+    return res.status(400).send("No IQAMA image uploaded.");
+  }
+
+  const { name, ShopName, phoneNum, password, password2 } = req.body;
+  const iqamaID = req.file.path; // Path to the uploaded image
 
   try {
     // Check if the shop owner already exists
     const existingShopOwner = await ShopOwner.findOne({ phoneNum });
-    if (existingShopOwner)
+    if (existingShopOwner) {
       return res.status(400).send("Shop owner already exists.");
+    }
 
-    // Password match check
-    if (password !== password2)
+    // Check if passwords match
+    if (password !== password2) {
       return res.status(400).send("Passwords do not match.");
+    }
 
     // Hash the password before saving
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Create and save the new shop owner
     const newShopOwner = new ShopOwner({
       name,
-      iqamaID,
+      ShopName,
       phoneNum,
       password: hashedPassword,
-      role: "shopowner", // Ensure the role is set to shopowner
-      approved: false, // Set approved to false initially
+      iqamaID, // Path to the uploaded IQAMA image
+      role: "shopowner", // Set role to shopowner
+      approved: false, // Default approval status
     });
 
     await newShopOwner.save();
+
     res.send(
       "Signup successful! Your request is pending approval and will be reviewed by the admin."
-    ); // Send a message back
+    );
   } catch (err) {
     console.error("Error during shop owner signup:", err);
     res.status(500).send("Shop owner signup failed. Please try again.");
   }
 });
+
 // =======================================
 // Shop Owner Login Route
 // =======================================
@@ -578,18 +615,6 @@ app.delete("/order/delete/:orderId", (req, res) => {
     return res.status(200).json({ success: true });
   });
 });
-
-let ordersByOwner = {};
-
-// Function to group and store orders by shop owner
-function storeOrdersByOwner(groupedOrders) {
-  for (const shopName in groupedOrders) {
-    if (!ordersByOwner[shopName]) {
-      ordersByOwner[shopName] = [];
-    }
-    ordersByOwner[shopName].push(...groupedOrders[shopName]);
-  }
-}
 
 // Handle checkout
 app.post("/checkout", isAuthenticated, async (req, res) => {
