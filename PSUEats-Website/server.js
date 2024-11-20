@@ -72,16 +72,15 @@ app.use(
     },
   })
 );
-
-// Error Route: Catch other errors
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).render("error", {
-    title: "Server Error - PSUEats",
-    errorCode: 500,
-    errorMessage: "Something went wrong on our end. Please try again later.",
+/*
+// Handle unknown routes
+app.use((req, res) => {
+  res.status(404).render("error", {
+    title: "Page Not Found - PSUEats",
+    errorCode: 404,
+    errorMessage: "The page you are looking for does not exist.",
   });
-});
+});*/
 
 //About us
 app.get("/AboutUs", async (req, res) => {
@@ -148,8 +147,7 @@ app.post("/user-signup", async (req, res) => {
     req.session.userId = newUser._id;
     req.session.role = newUser.role;
 
-    // Send success response
-    res.status(200).json({ message: "Sign-up successful! Please log in." });
+    res.sendFile(path.join(__dirname, "UserHomepage.html")); // Redirect to home page
   } catch (err) {
     console.error("Error during signup:", err);
     res.status(500).send("Sign up failed. Please try again.");
@@ -587,7 +585,7 @@ app.get("/get-menu-items", async (req, res) => {
 app.get("/order-history", async (req, res) => {
   try {
     if (!req.session.email) {
-      return res.redirect("/login"); // Redirect to login if not logged in
+      return res.redirect("/"); // Redirect to login if not logged in
     }
 
     // Fetch orders based on the user's email

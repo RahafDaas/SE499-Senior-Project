@@ -92,9 +92,6 @@
             /* Collapse borders for a cleaner look */
         }
 
-
-
-
         table thead {
             background-color: #007bff;
             color: #fff;
@@ -143,45 +140,50 @@
             background-color: #ff0000;
         }
 
-        .analytics-section {
-            background-color: #f8f9fa;
+        .report-section {
+            background-color: white;
             padding: 20px;
-            border-radius: 10px;
-            margin: 20px 0;
+            border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            /* Add spacing between elements */
         }
 
-        .analytics-section label {
+        .report-section label {
             font-size: 16px;
             font-weight: bold;
-            margin-bottom: 10px;
+            display: block;
+            margin-bottom: 5px;
         }
 
-        .analytics-section select,
-        .analytics-section input[type="date"] {
+        .report-section select,
+        .report-section input {
             margin: 10px 0;
             padding: 10px;
             width: 100%;
             max-width: 300px;
-            border: 1px solid #ccc;
             border-radius: 5px;
+            border: 1px solid #ddd;
             font-size: 14px;
         }
 
-        .analytics-section button {
-            margin-top: 15px;
+        .report-section button {
+            margin-top: 10px;
             padding: 10px 20px;
-            font-size: 16px;
-            border-radius: 5px;
             background-color: #28a745;
             color: white;
             border: none;
+            border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s;
         }
 
-        .analytics-section button:hover {
+        .report-section button:hover {
             background-color: #218838;
         }
 
@@ -307,7 +309,7 @@
 
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="orders-list">
                         <% if (orders && orders.length> 0) { %>
                             <% orders.forEach(order=> { %>
                                 <% const itemsForShop=order.orders.filter(item=> item.shopName === name); %>
@@ -466,7 +468,7 @@
                             <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="menu-items">
                         <% if (typeof foodItems !=='undefined' && foodItems.length> 0) { %>
                             <% foodItems.forEach(item=> { %>
                                 <tr>
@@ -504,8 +506,12 @@
                 </table>
             </div>
 
-            <h2><button onclick="window.location.href='menuMgmnt';">Manage Items</button></h2>
+            <h2><button onclick="window.location.href='menuMgmnt';">Add Menu Items</button></h2>
+            <div class="report-section">
+                <h2 style="color:#066ab1; background-color: white; box-shadow: none;">Generate Report</h2>
 
+                <button onclick="generateReport()">Download Report</button>
+            </div>
             <script>
                 document.querySelectorAll('input[type="file"]').forEach(input => {
                     input.addEventListener('change', function (event) {
@@ -521,6 +527,66 @@
                         }
                     });
                 });
+
+                function generateReport() {
+                    const date = new Date().toLocaleString();
+                    let reportContent = `
+        <h1>Shop Owner Report</h1>
+        <h2>Date: ${date}</h2>
+        <h2>Orders Managment</h2>
+        <table border="1" style=" border: 1px solid black; border-collapse: collapse;" border="1">
+            <tr>
+                <th style="background-color: #066ab1; color: white">Order ID</th>
+                <th style="background-color: #066ab1; color: white">User Email</th>
+                <th style="background-color: #066ab1; color: white">Dish Name</th>
+                <th style="background-color: #066ab1; color: white">Price</th>
+                <th style="background-color: #066ab1; color: white">Payment Method</th>
+                <th style="background-color: #066ab1; color: white">Order Status</th>
+            </tr>`;
+
+                    const ordersList = Array.from(document.querySelectorAll('#orders-list tr'));
+                    ordersList.forEach(row => {
+                        const cells = row.querySelectorAll('td:not(:last-child)'); // Skip the action buttons
+                        reportContent += `<tr>
+            <td>${cells[0].textContent}</td>
+            <td>${cells[1].textContent}</td>
+            <td>${cells[2].textContent}</td>
+            <td>${cells[3].textContent}</td>
+            <td>${cells[4].textContent}</td>
+            <td>${cells[5].textContent}</td>
+        </tr>`;
+                    });
+
+                    reportContent += `</table><h2>Menu Items</h2><table style=" border: 1px solid black; border-collapse: collapse;" border="1"><tr>
+            <th style="background-color: #066ab1; color: white">Dish Picture</th>
+                <th style="background-color: #066ab1; color: white">Dish Name</th>
+                <th style="background-color: #066ab1; color: white">Price</th>
+                <th style="background-color: #066ab1; color: white">Calories</th>
+            </tr>`;
+
+                    const menuItems = Array.from(document.querySelectorAll('#menu-items tr'));
+                    menuItems.forEach(row => {
+                        const cells = row.querySelectorAll('td:not(:last-child)'); // Skip the action buttons
+                        reportContent += `<tr>
+            <td>${cells[0].textContent}</td>
+            <td>${cells[1].textContent}</td>
+            <td>${cells[2].textContent}</td>
+            <td>${cells[3].textContent}</td>
+            
+        </tr>`;
+                    });
+
+                    reportContent += `</table>`;
+                    const blob = new Blob([reportContent], { type: 'text/html' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'shop_owner_report.html';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }
             </script>
 
 
