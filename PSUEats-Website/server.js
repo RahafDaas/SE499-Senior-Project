@@ -31,8 +31,6 @@ const User = require("./UserSchema"); // User schema
 const ShopOwner = require("./ShopOwnerSchema"); // Shop Owner schema
 const Restaurant = require("./RestaurantSchema"); // Restaurant schema
 const Order = require("./OrderSchema"); // Import Order model
-const Item = require("./menuItemMgmntSchema"); //menu item schema
-const Offer = require("./OffersSchema"); // Offers Schema
 const Review = require("./ReviewSchema");
 const { isAuthenticated, isAdmin } = require("./middleware"); // Admin, User middleware for protected routes
 const { title } = require("process");
@@ -103,25 +101,10 @@ app.post("/user-signup", async (req, res) => {
   const { name, email, phoneNum, password, password2 } = req.body;
 
   try {
-    // Ensure password and password2 are provided
-    if (!password || !password2) {
-      return res
-        .status(400)
-        .send("Password and confirmation password are required.");
-    }
-
     // Check if user already exists
     const existingUser = await User.findOne({ email });
-    if (existingUser) return res.status(400).send("User already exists.");
-
-    // Password match check
-    if (password !== password2)
-      return res.status(400).send("Passwords do not match.");
-
-    // Ensure password is not empty
-    if (!password) {
-      return res.status(400).send("Password is required.");
-    }
+    if (existingUser)
+      return res.json({ success: false, message: "User already exists." });
 
     // Hash the password before saving
     const hashedPassword = await bcrypt.hash(password, 10); // 10 is the salt rounds
@@ -142,15 +125,16 @@ app.post("/user-signup", async (req, res) => {
 
     // Save the user to the database
     await newUser.save();
-
-    // Create session after signup
-    req.session.userId = newUser._id;
-    req.session.role = newUser.role;
-
-    res.sendFile(path.join(__dirname, "UserHomepage.html")); // Redirect to home page
+    return res.json({
+      success: true,
+      message: "Registration successful. Please log in.",
+    });
   } catch (err) {
     console.error("Error during signup:", err);
-    res.status(500).send("Sign up failed. Please try again.");
+    return res.json({
+      success: false,
+      message: "Sign up failed. Please try again.",
+    });
   }
 });
 
@@ -203,7 +187,10 @@ app.post("/shopowner-signup", upload.single("iqamaID"), async (req, res) => {
 
   try {
     // Check if the shop owner already exists
-    const existingShopOwner = await ShopOwner.findOne({ phoneNum });
+    const existingShopOwner = await ShopOwner.findOne(
+      { phoneNum },
+      { ShopName }
+    );
     if (existingShopOwner) {
       return res.status(400).send("Shop owner already exists.");
     }
@@ -257,7 +244,7 @@ app.post("/shopowner-login", async (req, res) => {
       // Create session after login
       req.session.userId = shopOwner._id;
       req.session.role = shopOwner.role;
-      req.session.name = shopOwner.name;
+      req.session.ShopName = shopOwner.ShopName;
       res.redirect("/dashboard"); // Redirect to shop owner dashboard
     }
   } catch (err) {
@@ -304,16 +291,16 @@ app.get("/pendingShopOwners", isAdmin, async (req, res) => {
 });
 
 app.post("/approveShopOwner", isAdmin, async (req, res) => {
-  const { email } = req.body;
+  const { phoneNum } = req.body;
 
   try {
-    const shopOwner = await ShopOwner.findOne({ email });
+    const shopOwner = await ShopOwner.findOne({ phoneNum });
     if (!shopOwner) return res.status(404).send("Shop owner not found.");
 
     shopOwner.isApproved = true;
     await shopOwner.save();
 
-    res.send(`Shop owner ${email} approved successfully.`);
+    res.send(`Shop owner ${shopOwner.ShopName} approved successfully.`);
   } catch (err) {
     console.error("Error approving shop owner:", err);
     res.status(500).send("Failed to approve shop owner.");
@@ -326,9 +313,15 @@ app.post("/approveShopOwner", isAdmin, async (req, res) => {
 app.get("/adminLogin", (req, res) => {
   res.sendFile(path.join(__dirname, "adminLogin.html"));
 });
-
-app.get("/user-signup-login", isAuthenticated, (req, res) => {
-  res.sendFile(path.join(__dirname, "user-signup-login.html"));
+app.get("/register", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
+});
+app.get("/", (req, res) => {
+  res.redirect("/register");
+});
+// Route for login page
+app.get("/login", (req, res) => {
+  res.sendFile(path.join(__dirname, "login.html"));
 });
 
 app.get("/shopowner-signup", isAuthenticated, (req, res) => {
@@ -490,7 +483,7 @@ app.get("/ownerProfile", (req, res) => {
 
 //owner update profile
 app.post("/update-profile", isAuthenticated, async (req, res) => {
-  const { name, phoneNum } = req.body; // Extract data from the request body
+  const { ShopName, phoneNum } = req.body; // Extract data from the request body
 
   // Check if user is logged in (assuming you use sessions)
   if (!req.session.userId) {
@@ -500,11 +493,11 @@ app.post("/update-profile", isAuthenticated, async (req, res) => {
   try {
     // Update the user's profile in the database
     const updatedUser = await ShopOwner.findByIdAndUpdate(req.session.userId, {
-      name,
+      ShopName,
       phoneNum,
     });
     // Redirect to the home page after successful update
-    res.redirect("/"); // Adjust the path to your home page if needed
+    res.redirect("/dashboard"); // Adjust the path to your home page if needed
     if (!updatedUser) {
       return res.status(404).send("User not found.");
     }
@@ -582,6 +575,56 @@ app.get("/get-menu-items", async (req, res) => {
   }
 });
 
+app.post("/add-restaurant", async (req, res) => {
+  try {
+    console.log("Request body:", req.body);
+    const {
+      title,
+      time,
+      pickup,
+      isOpen,
+      logoUrl,
+      rating,
+      ratingCount,
+      code,
+      location,
+      category,
+    } = req.body;
+
+    if (!title) {
+      throw new Error("Restaurant title is required.");
+    }
+
+    const newRestaurant = new Restaurant({
+      title,
+      time,
+      pickup,
+      isOpen,
+      logoUrl,
+      rating,
+      ratingCount,
+      code,
+      location,
+      category,
+    });
+
+    await newRestaurant.save();
+
+    res.json({
+      success: true,
+      message: "Restaurant added successfully.",
+      data: newRestaurant,
+    });
+  } catch (error) {
+    console.error("Error in /add-restaurant:", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Error adding restaurant.",
+      error: error.message,
+    });
+  }
+});
+
 app.get("/order-history", async (req, res) => {
   try {
     if (!req.session.email) {
@@ -603,15 +646,20 @@ app.get("/order-history", async (req, res) => {
 
 app.delete("/order/delete/:orderId", (req, res) => {
   const { orderId } = req.params;
-  // Use the orderId to delete the order from the database
-  Order.findByIdAndDelete(orderId, (err, result) => {
-    if (err) {
+  Order.findByIdAndDelete(orderId)
+    .then((result) => {
+      if (!result) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Order not found" });
+      }
+      return res.status(200).json({ success: true });
+    })
+    .catch((err) => {
       return res
         .status(500)
         .json({ success: false, message: "Failed to delete order" });
-    }
-    return res.status(200).json({ success: true });
-  });
+    });
 });
 
 // Handle checkout
@@ -714,25 +762,24 @@ app.get("/order-confirmation/:id", isAuthenticated, async (req, res) => {
 // Route to render the dashboard with food items for the logged-in shop owner
 app.get("/dashboard", isAuthenticated, async (req, res) => {
   try {
-    const { name } = req.session; // Extract the name from the session
-
+    const { ShopName } = req.session; // Extract the name from the session
     // Check if user is logged in
     if (!req.session.userId) {
       return res.status(401).send("User not logged in.");
     }
 
     // Find the restaurant using the name from the session
-    const restaurant = await Restaurant.findOne({ title: name }); // Use the name instead of "Selu Cafe"
+    const restaurant = await Restaurant.findOne({ title: ShopName }); // Use the name instead of "Selu Cafe"
     if (!restaurant) return res.status(404).send("Restaurant not found.");
 
     const foodItems = restaurant.food;
 
     // Fetch orders where the shop name matches the restaurant name
     const orders = await Order.find({
-      "orders.shopName": name, // Match shopName in the orders with the restaurant name
+      "orders.shopName": ShopName, // Match shopName in the orders with the restaurant name
     });
     //const offers=restaurant.offers;
-    res.render("shopowner-dashboard", { foodItems, orders: orders, name });
+    res.render("shopowner-dashboard", { foodItems, orders: orders, ShopName });
   } catch (error) {
     console.error("Error fetching restaurant and orders data:", error);
     res.status(500).send("An error occurred.");
@@ -800,29 +847,29 @@ app.post(
   isAuthenticated,
   upload.single("dishPic"),
   async (req, res) => {
-    const { action, dishname, price, calories } = req.body;
+    const { action, originalDishname, dishname, price, calories } = req.body;
     const newDishPic = req.file ? `/uploads/${req.file.filename}` : null;
 
     try {
       if (action === "update") {
         // Update the food item, including the new image if uploaded
+        const updateFields = {
+          "food.$.price": price,
+          "food.$.calories": calories,
+        };
+        if (dishname) updateFields["food.$.dishname"] = dishname;
+        if (newDishPic) updateFields["food.$.dishPic"] = newDishPic;
+
         await Restaurant.findOneAndUpdate(
-          { "food.dishname": dishname },
-          {
-            $set: {
-              "food.$.dishname": dishname,
-              "food.$.price": price,
-              "food.$.calories": calories,
-              "food.$.dishPic": newDishPic, // Only update dishPic if a new image is provided
-            },
-          },
+          { "food.dishname": originalDishname },
+          { $set: updateFields },
           { new: true }
         );
       } else if (action === "delete") {
         // Delete the food item
         await Restaurant.findOneAndUpdate(
-          { "food.dishname": dishname },
-          { $pull: { food: { dishname: dishname } } },
+          { "food.dishname": originalDishname },
+          { $pull: { food: { dishname: originalDishname } } },
           { new: true }
         );
       }
@@ -837,20 +884,6 @@ app.post(
 // =======================================
 // Stripe
 // =======================================
-/*app.post("/create-payment-intent", async (req, res) => {
-  const { amount } = req.body; // Amount should be in cents
-
-  try {
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: amount,
-      currency: "sar", // Change to your preferred currency
-    });
-    res.send({ clientSecret: paymentIntent.client_secret });
-  } catch (error) {
-    res.status(500).send({ error: error.message });
-  }
-});
-*/
 
 // Route to update order status
 app.post("/update-status/:id", isAuthenticated, async (req, res) => {
@@ -972,7 +1005,7 @@ app.get("/menuMgmnt", async (req, res) => {
 
     // Step 2: Find the restaurant that matches the shop owner's name
     const restaurant = await Restaurant.findOne({
-      title: { $regex: `^${owner.name.trim()}$`, $options: "i" },
+      title: { $regex: `^${owner.ShopName.trim()}$`, $options: "i" },
     }).populate("food"); // Populate the 'food' array to get the menu items
 
     if (!restaurant) {
@@ -1002,7 +1035,7 @@ app.post("/menuMgmnt", async (req, res) => {
 
     // Step 2: Find the restaurant by its title (matching the shop owner's name)
     const restaurant = await Restaurant.findOne({
-      title: { $regex: `^${owner.name.trim()}$`, $options: "i" },
+      title: { $regex: `^${owner.ShopName.trim()}$`, $options: "i" },
     });
 
     if (!restaurant) {
@@ -1066,7 +1099,7 @@ app.post("/addingItem", upload.single("dishPic"), async (req, res) => {
 
     // Step 2: Find the restaurant whose title matches the shop owner's name
     const restaurant = await Restaurant.findOne({
-      title: { $regex: `^${owner.name.trim()}$`, $options: "i" },
+      title: { $regex: `^${owner.ShopName.trim()}$`, $options: "i" },
     });
 
     // If no restaurant is found, return an error
@@ -1124,6 +1157,12 @@ app.post("/addingItem", upload.single("dishPic"), async (req, res) => {
   }
 });
 
+app.get("/get-menu", async (req, res) => {
+  const restaurantCode = req.query.restaurantCode;
+  const menu = await fetchMenuFromDatabase(restaurantCode); // Replace with your DB logic
+  res.json(menu);
+});
+
 //Offers
 app.get("/Offers", async (req, res) => {
   try {
@@ -1135,7 +1174,7 @@ app.get("/Offers", async (req, res) => {
 
     // Step 2: Find the restaurant that matches the shop owner's name
     const restaurant = await Restaurant.findOne({
-      title: { $regex: `^${owner.name.trim()}$`, $options: "i" },
+      title: { $regex: `^${owner.ShopName.trim()}$`, $options: "i" },
     }).populate("food"); // Populate the 'food' array to get the menu items
 
     if (!restaurant) {
@@ -1163,7 +1202,7 @@ app.post("/addOffer", async (req, res) => {
 
     // Step 2: Find the restaurant whose title matches the shop owner's name
     const restaurant = await Restaurant.findOne({
-      title: { $regex: `^${owner.name.trim()}$`, $options: "i" },
+      title: { $regex: `^${owner.ShopName.trim()}$`, $options: "i" },
     });
 
     if (!restaurant) {

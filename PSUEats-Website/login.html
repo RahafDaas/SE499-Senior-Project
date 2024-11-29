@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- general meta tags -->
+    <meta charset="utf-8">
+    <meta name="author" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- site specific tags -->
+    <title> PSUEats | Registeration</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/6991b496f2.js" crossorigin="anonymous"></script>
+    <script src="script.js"></script>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="Login_form">
+            <h1 id="FormHead">User Log In</h1>
+            <div id="message" style="display:none; margin-top: 9px; color: green;"></div>
+
+            <div id="error"></div>
+            <form id="form" action="/user-login" method="POST">
+                <div class="inputSet">
+                    <div class="inputFields" id="Email">
+                        <i class="fa-solid fa-envelope"></i>
+                        <i class="fa-regular fa-circle-check" id="correctEmailIcon" style="display: none;"></i>
+                        <i class="fa-regular fa-circle-xmark" id="wrongEmailIcon" style="display: none;"></i>
+                        <input type="email" name="email" placeholder="Email" id="email" onkeyup="emailValidation()"
+                            required>
+                        <span id="emailError" class="errorMseg"></span>
+                    </div>
+                    <div class="inputFields" id="Password">
+                        <i class="fa-solid fa-lock"></i>
+                        <i class="fa-regular fa-circle-check" id="correctPassIcon" style="display: none;"></i>
+                        <i class="fa-regular fa-circle-xmark" id="wrongPassIcon" style="display: none;"></i>
+                        <input type="password" name="password" placeholder="Password" id="password" required
+                            onkeyup="passValidation()">
+                        <span id="passwordError" class="errorMseg"></span>
+                    </div>
+
+                    <p class="resetPass" id="passReset">Forgot Password? <a href="#">Reset Here</a></p>
+
+                    <p class="shopownerLogin" style="display:block;" id="shopownerLogin">Already have a shop owner
+                        account? <a href="shopownerLogin.html">Login as Shop Owner</a></p>
+                    <p class="adminLogin" style="display:block;" id="adminLogin">Admin? <a href="adminLogin.html">Login
+                            here</a></p>
+                    <p class="register" style="display:block;" id="register">Don't Have an Account? <a
+                            href="index.html">Register here</a></p>
+                </div>
+
+                <div class="field_btn" style="margin-top: 3%;">
+                    <button type="submit" id="login_btn" onclick="return loginValidation()">Log
+                        In</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+
+    </script>
+    <script src="script.js"></script>
+</body>
+
+</html>

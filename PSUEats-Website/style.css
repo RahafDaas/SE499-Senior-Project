@@ -80,8 +80,8 @@ input {
 .field_btn {
   width: 100%;
   display: flex;
-  justify-content: space-between;
-  margin-top: 3%;
+  justify-content: center;
+  margin-top: 20%;
 }
 .field_btn button {
   flex-basis: 47%;

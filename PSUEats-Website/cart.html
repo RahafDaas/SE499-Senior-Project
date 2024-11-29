@@ -7,6 +7,13 @@
     <title>Your Cart</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap">
     <style>
+        :root {
+            --primary-color: #e67e22;
+            --secondary-color: #333;
+            --accent-color: darkblue;
+            --background-color: #f0f0f0;
+        }
+
         .loader {
             display: none;
             position: fixed;
@@ -21,18 +28,22 @@
             font-family: 'Roboto', sans-serif;
             background-color: #f3f4f6;
             margin: 0;
-            padding: 0;
+            padding-right: 5%;
+            width: 100%;
+
         }
 
         header {
-            background-color: #1d3557;
-            color: white;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 15px 20px;
-            gap: 10px;
-            flex-wrap: wrap;
+            justify-content: space-between;
+            padding: 20px;
+            background-color: #fffcfc;
+            box-shadow: 0px 7px 9px rgba(0, 0, 0, 0.1);
+            margin: 0%;
+            height: 100px;
+            gap: 3%;
+            width: 100%;
         }
 
         header h1 {
@@ -45,35 +56,32 @@
         .nav-buttons {
             display: flex;
             gap: 10px;
+            padding-right: 3%;
         }
 
         .nav-buttons a {
-            padding: 10px 20px;
-            border-radius: 5px;
-            text-decoration: none;
-            color: white;
-            font-weight: 500;
-            transition: background-color 0.3s ease;
-        }
-
-        .nav-buttons a:first-child {
             background-color: #efb300;
+            border-radius: 5px;
+            padding: 10px 20px;
+            color: white;
+            text-decoration: none;
+            font-size: 1rem;
+            margin: 0 10px;
+            transition: background-color 0.3s;
         }
 
-        .nav-buttons a:last-child {
-            background-color: #d80000;
+        .nav-button:hover {
+            background-color: var(--primary-color);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
         }
 
-        .nav-buttons a:first-child:hover {
-            background-color: #c19104;
-        }
-
-        .nav-buttons a:last-child:hover {
-            background-color: #c10303;
+        .logout-button:hover {
+            background-color: red;
         }
 
         .container {
             padding: 20px;
+            margin-right: 5%;
             max-width: 1200px;
             margin: 0 auto;
         }
@@ -356,15 +364,130 @@
         .cart-item {
             margin: 10px 0;
         }
+
+        .logo img {
+            height: 50px;
+            padding-left: 2%;
+        }
+
+        .logo img:hover {
+
+            transition: transform 0.3s ease;
+            transform: scale(1.1);
+        }
+
+        .logoRestaurantName {
+            display: flex;
+            flex-direction: row;
+            justify-content: start;
+            gap: 6%;
+            width: 600px
+        }
+
+        .logoRestaurantName h1 {
+            margin-top: 2%;
+            color: var(--accent-color);
+        }
+
+        @media screen and (min-width:350px) and (max-width:659px) {
+
+
+            header {
+
+                flex-direction: column;
+                height: auto;
+                padding: 5%;
+            }
+
+            .nav-buttons {
+                display: flex;
+                flex-direction: column;
+                margin-bottom: 5%;
+
+            }
+
+            .nav-buttons a {
+                width: 100px;
+                text-align: center;
+            }
+
+            * {
+                font-size: small;
+            }
+
+            .logoRestaurantName {
+                display: flex;
+                flex-direction: column;
+                width: 250px
+            }
+
+            .logoRestaurantName h1 {
+                text-align: center;
+            }
+        }
+
+        .center-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        /* Style the label */
+        .center-content label {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* Style the select element */
+        .center-content select {
+            width: 200px;
+            padding: 10px;
+            font-size: 14px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            color: #333;
+            outline: none;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        /* Hover effect */
+        .center-content select:hover {
+            border-color: #007BFF;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Focus effect */
+        .center-content select:focus {
+            border-color: #007BFF;
+            box-shadow: 0px 0px 8px rgba(0, 123, 255, 0.5);
+            background-color: #fff;
+        }
+
+        /* Style the dropdown options */
+        .center-content select option {
+            padding: 5px;
+            font-size: 14px;
+            color: #333;
+        }
     </style>
 </head>
 
 <body>
     <header>
-        <h1>Your Cart</h1>
+        <div class="logoRestaurantName">
+            <div class="logo">
+                <img src="./images/psueatslogo.png" alt="PSUEats Logo" />
+            </div>
+            <h1>Your Cart</h1>
+        </div>
         <div class="nav-buttons">
-            <a href="/home">Home</a>
-            <a href="/logout">Logout</a>
+            <a href="/home" class="nav-button">Home</a>
+            <a href="/logout" class="nav-button logout-button">Logout</a>
         </div>
     </header>
 

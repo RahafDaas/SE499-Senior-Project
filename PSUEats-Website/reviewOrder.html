@@ -6,16 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Review Order</title>
     <script src="https://kit.fontawesome.com/6991b496f2.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="styleforUserHomepage.css">
+
     <style>
         :root {
-            --primaryColor: darkblue;
-            --secondaryColor: lightblue;
-            --whiteColor: white;
-            --blackColor: black;
-            --softBlueColor: rgb(229, 245, 253);
-            --grayColor: rgb(230, 226, 226);
-            --darkgreyColor: gray;
-            --orangeColor: darkorange;
+            --primary-color: #e67e22;
+            --secondary-color: #333;
+            --accent-color: darkblue;
+            --background-color: #f0f0f0;
         }
 
         * {
@@ -31,21 +29,23 @@
             width: 100%;
             height: 100vh;
             overflow: hidden;
-            background-color: var(--softBlueColor);
+            background-color: rgb(234, 234, 234);
         }
 
         .sidebar {
-            width: 250px;
             height: 100%;
-            background-color: var(--primaryColor);
+            width: 250px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             position: fixed;
-            padding: 2%;
-            color: var(--whiteColor);
             top: 0;
             left: 0;
+            padding: 2%;
+            background-color: white;
+            color: var(--whiteColor);
+            box-shadow: 0px 7px 11px rgba(0, 0, 0, 0.1);
+
         }
 
         .sidebar-menu {
@@ -84,7 +84,7 @@
             gap: 20px;
             padding: 2%;
             overflow-y: auto;
-            background-color: var(--softBlueColor);
+            background-color: rgb(234, 234, 234);
         }
 
         .navbar {
@@ -103,14 +103,9 @@
             font-size: 1.5rem;
             cursor: pointer;
             background: transparent;
-            border: none;
             color: var(--primaryColor);
             margin-left: 20px;
             transition: color 0.3s;
-        }
-
-        .user:hover {
-            color: var(--orangeColor);
         }
 
         .feedback-form {
@@ -189,18 +184,62 @@
             border-radius: 5px;
             margin-top: 10px;
         }
+
+        .logo {
+            margin-right: auto;
+
+        }
+
+        .logo img {
+            height: 50px;
+            width: 190px;
+        }
+
+        .logo img:hover {
+
+            transition: transform 0.3s ease;
+            transform: scale(1.1);
+        }
+
+        .sidebar-menu a,
+        .sidebar-logout a {
+            padding: 5% 8%;
+            margin: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 1rem;
+            text-decoration: none;
+            color: var(--primaryColor);
+        }
+
+        .sidebar-menu a i,
+        .sidebar-logout a i {
+            font-size: 20px;
+        }
+
+        .logo img {
+            width: 90%;
+        }
+
+        .sidebar-menu a:hover,
+        .sidebar-logout a:hover {
+            background-color: var(--orangeColor);
+            border-radius: 50px;
+        }
     </style>
 </head>
 
 <body>
     <!-- Sidebar -->
     <div class="sidebar">
-        <h1 class="logo">PSUEats</h1>
+        <div class="logo">
+            <img src="./images/psueatslogo.png" alt="PSUEats Logo" />
+        </div>
         <div class="sidebar-menu">
-            <a href="#"><i class="fa-solid fa-house"></i> Home</a>
-            <a href="#"><i class="fa-solid fa-clock"></i> My Orders</a>
+            <a href="/home"><i class="fa-solid fa-house"></i> Home</a>
+            <a href="/order-history"><i class="fa-solid fa-clock"></i> My Orders</a>
             <a href="AboutUs"><i class="fa-solid fa-circle-info"></i> About Us</a>
-            <a href="#"><i class="fa-solid fa-gear"></i> Settings</a>
         </div>
         <div class="sidebar-logout">
             <a href="/Logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
@@ -219,20 +258,7 @@
 
         <div class="feedback-form">
             <h2>Review Your Order!</h2>
-            <label for="shop-select">Choose a Shop:</label>
-            <select id="shop-select">
-                <option value="" disabled selected>Select a shop</option>
-                <option value="Selu">Selu</option>
-                <option value="Saadeddin">Saadeddin</option>
-                <option value="Antik Cafe">Antik Cafe</option>
-                <option value="Toss Cafe">Toss Cafe</option>
-                <option value="Dofaa 89 Cafe">Dofaa 89 Cafe</option>
-                <option value="Maitre Choux Cafe">Maitre Choux Cafe</option>
-                <option value="Calzey Cafe">Calzey Cafe</option>
-                <option value="Mini Market">Mini Market</option>
-                <option value="Pizza Wow">Pizza Wow</option>
-                <option value="SoMatcha">SoMatcha</option>
-            </select>
+            <p id="shop-select"></p>
 
             <div class="rating-container">
                 <div class="rating-group">
@@ -271,13 +297,13 @@
         }
 
         document.getElementById('submitReview').addEventListener('click', async () => {
-            const selectedShop = document.getElementById('shop-select').value;
+            const selectedShop = document.getElementById('shop-select').textContent.replace("Ordered from: ", "").trim();
             const ratingFood = Array.from(document.querySelectorAll('#food-rating .star.selected')).length;
             const ratingService = Array.from(document.querySelectorAll('#service-rating .star.selected')).length;
             const feedback = document.getElementById('feedback').value.trim();
 
-            if (!selectedShop || ratingFood === 0 || ratingService === 0 || feedback === '') {
-                alert('Please select a shop, provide ratings for both food and service, and enter your feedback.');
+            if (ratingFood === 0 || ratingService === 0 || feedback === '') {
+                alert('Please provide ratings for both food and service, and enter your feedback.');
                 return;
             }
 
@@ -304,6 +330,23 @@
                 alert('There was an error submitting your review. Please try again.');
             }
         });
+
+        // Function to get query parameters from the URL
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        // Retrieve the shop name from the URL
+        const shopName = getQueryParam('shopName');
+
+        // Set the shop name in the dropdown or display it directly
+        if (shopName) {
+            const shopSelect = document.getElementById('shop-select');
+            shopSelect.textContent = "Ordered from: " + shopName;            // Optionally display the shop name somewhere on the page
+            console.log("Reviewing for shop:", shopName);
+        }
+
     </script>
 
 </body>

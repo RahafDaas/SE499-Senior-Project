@@ -4,164 +4,280 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Us</title>
+    <title>About Us - PSU Eats</title>
     <script src="https://kit.fontawesome.com/6991b496f2.js" crossorigin="anonymous"></script>
-    <script src="../server.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-
-
+        :root {
+            --primary-color: #e67e22;
+            --secondary-color: #333;
+            --accent-color: darkblue;
+            --background-color: #f0f0f0;
         }
 
         body {
-            height: 100vh;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+
+            background-color: #f8f8f8;
             width: 100%;
-            background-image: url(../images/background.JPG);
-            background-position: center;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            background-color: #fffcfc;
+            box-shadow: 0px 7px 9px rgba(0, 0, 0, 0.1);
+            margin: 0%;
+            height: 100px;
+            border-bottom: 7px solid #efb300;
+            gap: 3%;
+            width: 100%;
+        }
+
+        h3 {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .nav {
+            padding-right: 3%;
+        }
+
+        nav a {
+            background-color: #efb300;
+            border-radius: 5px;
+            padding: 10px 20px;
+            color: white;
+            text-decoration: none;
+            font-size: 1rem;
+            margin: 0 10px;
+            transition: background-color 0.3s;
+        }
+
+        .nav-button:hover {
+            background-color: var(--primary-color);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .logout-button:hover {
+            background-color: red;
+        }
+
+
+        .about-us-section {
+            background: linear-gradient(rgba(0, 0, 50, 0.8), rgba(0, 0, 50, 0.8)),
+                url('../images/psu.jpg') center center no-repeat;
             background-size: cover;
+            padding: 60px 20px;
+            color: white;
+            width: 100%;
+        }
+
+        .about-us-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            padding: 20px;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #efb300;
+            margin-bottom: 20px;
+            text-align: center;
             position: relative;
         }
 
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 30px;
-            background-color: #68add5;
+        .section-title::after {
+            content: "";
+            position: absolute;
+            width: 50px;
+            height: 4px;
+            background-color: #d80000;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
         }
 
-        .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: darkblue;
-            text-decoration: none;
-        }
-
-        .about-section {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 100px;
-            gap: 50px;
-        }
-
-        .about-content {
-            max-width: 50%;
-        }
-
-        .about-content h1 {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-            color: rgb(56, 56, 78);
-
-        }
-
-        .about-content p {
-            margin-bottom: 20px;
-            line-height: 1.6;
-            font-size: 18px;
-            color: #576b80;
-        }
-
-        .btn-primary {
-            padding: 12px 20px;
-            background-color: #007bff;
-            color: white;
-            border-radius: 5px;
-            text-decoration: none;
-        }
-
-        .about-image {
-            max-width: 350px;
-            /* Set a max width for the image container */
-        }
-
-        .about-image img {
-            width: 100%;
-            /* Image fills the container */
+        .content-box {
+            background-color: rgba(0, 0, 50, 0.7);
+            padding: 20px;
             border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        body {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            /* Prevent scrollbar */
+        .content-box:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
         }
 
-        .logo-container {
-            margin-left: auto;
-            margin-right: auto;
+        p,
+        ul {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        ul {
+            list-style: disc;
+            padding-left: 20px;
+        }
+
+        .cta-button {
+            background-color: #efb300;
+            color: white;
+            padding: 15px 25px;
+            text-align: center;
+            font-size: 1.2rem;
+            border-radius: 5px;
             width: 100%;
-            overflow: hidden;
-            /* Hide overflowing content */
-            white-space: nowrap;
-            /* Keep logos in one line */
-            width: 900px;
+            max-width: 250px;
+            margin: 30px auto;
+            cursor: pointer;
+            transition: background-color 0.3s;
         }
 
-        .logo-scroller {
-            display: inline-block;
-            animation: scroll 20s linear infinite;
-            /* Animation for scrolling */
+        .cta-button:hover {
+            background-color: #d80000;
         }
 
-        .logo-scroller img {
-            height: 100px;
-            /* Adjust logo size */
-            margin: 0 20px;
-            /* Space between logos */
+        footer {
+            background-color: #12236e;
+            color: white;
+            text-align: center;
+            padding: 15px;
         }
 
-        @keyframes scroll {
-            from {
-                transform: translateX(100%);
-                /* Start off the right side */
+        footer a {
+            color: #efb300;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .about-us-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .logo img {
+            height: 50px;
+
+        }
+
+        .logo img:hover {
+
+            transition: transform 0.3s ease;
+            transform: scale(1.1);
+        }
+
+        @media screen and (min-width:350px) and (max-width:500px) {
+            header {
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+                padding-bottom: 10%;
             }
 
-            to {
-                transform: translateX(-100%);
-                /* End off the left side */
+            nav {
+                display: flex;
+                flex-direction: column;
+            }
+
+            nav a {
+                width: 100px;
+                text-align: center;
+                margin-bottom: 2%;
+            }
+
+            * {
+                font-size: small;
             }
         }
     </style>
 </head>
 
 <body>
-    <header>
 
+    <!-- Navigation Bar -->
+    <header>
+        <div class="logo">
+            <img src="./images/psueatslogo.png" alt="PSUEats Logo" />
+        </div>
+        <div class="nav">
+            <nav>
+                <a href="/home" class="nav-button">Home</a>
+                <a href="/logout" class="nav-button logout-button">Logout</a>
+            </nav>
+        </div>
     </header>
 
-    <section class="about-section">
-        <div class="about-image">
-            <img src="../images/PSUlogo-removebg-preview.png" alt="Illustration of a person working on a laptop">
-        </div>
-        <div class="about-content">
-            <h1>
-                <%=heading %>
-            </h1>
-            <p>
-                <%=description %>
-            </p>
+    <!-- About Us Section -->
+    <section class="about-us-section">
+        <div class="about-us-content">
+            <div class="content-box">
+                <h2 class="section-title">About Us</h2>
+                <p>Welcome to <strong>PSU Eats</strong>, where we make dining on campus easy, fast, and accessible. Our
+                    app is designed to cater to the busy student life, allowing you to pre-order your meals and skip the
+                    long lines.</p>
+            </div>
+
+            <div class="content-box">
+                <h2 class="section-title">Our Mission</h2>
+                <p>At PSU Eats, our mission is to provide a seamless and convenient food ordering experience for
+                    students. We are dedicated to:</p>
+                <ul>
+                    <li>Offering a wide variety of meal options, from quick snacks to hearty meals.</li>
+                    <li>Ensuring that all students' dietary preferences are met.</li>
+                    <li>Partnering with local vendors to bring fresh, quality food.</li>
+                    <li>Providing exclusive discounts for students to make dining affordable.</li>
+                </ul>
+            </div>
+
+            <div class="content-box">
+                <h2 class="section-title">What Makes Us Unique</h2>
+                <ul>
+                    <li><strong>Skip the Lines:</strong> Save valuable time by pre-ordering your meals and skipping the
+                        queue.</li>
+                    <li><strong>Diverse Meal Options:</strong> Whether you're craving a quick snack or a full meal,
+                        we've got you covered.</li>
+                    <li><strong>Student Discounts:</strong> Enjoy exclusive discounts on your meals and save money while
+                        eating well.</li>
+                </ul>
+            </div>
+
+            <div class="content-box">
+                <h2 class="section-title">Our Story</h2>
+                <p>Founded right on campus, <strong>PSU Eats</strong> understands the unique challenges students face.
+                    Juggling classes, assignments, and social life is hard enough, which is why we’ve created a solution
+                    that brings food to your fingertips, making your campus life just a little bit easier.</p>
+            </div>
+
+            <div class="content-box" style="padding-bottom: 10%;">
+                <h2 class="section-title">Join Us Today</h2>
+                <p>Ready to simplify your meal experience? <strong>PSU Eats</strong> is here to make your life easier.
+                    Join our community today and start enjoying the convenience of pre-ordering your meals!</p>
+                <a href="/home" class="cta-button">Start Ordering Now</a>
+
+            </div>
         </div>
     </section>
-    <div class="logo-container">
-        <div class="logo-scroller">
-            <img src="../images/tosscafe.jpeg" alt="tosscafe">
-            <img src="../images/selu.jpg" alt="selu">
-            <img src="../images/saadeddin.jpg" alt="saadeddin">
-            <img src="../images/antik.jpg" alt="antik">
-            <img src="../images/pizza.jpg" alt="pizza">
-            <img src="../images/dofaa89.png" alt="dofaa89">
-            <img src="../images/calzey.jpg" alt="calzey">
-            <img src="../images/maitrechoux.jpeg" alt="maitrechoux">
-            <img src="../images/mini-market.jpg" alt="mini-market">
-        </div>
-    </div>
+
+    <footer>
+        &copy; 2024 PSU Eats. All rights reserved.
+    </footer>
+
 </body>
 
 </html>

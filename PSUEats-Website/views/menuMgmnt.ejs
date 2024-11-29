@@ -14,12 +14,17 @@
 
 <body>
     <header>
-        <h1>PSUEats</h1>
+        <div class="logoRestaurantName">
+            <div class="logo">
+                <img src="./images/psueatslogo.png" alt="PSUEats Logo" />
+            </div>
+            <h1>Add To Menu</h1>
+        </div>
         <nav>
-            <button onclick="window.location.href='ownerProfile';">Profile</button>
-            <button onclick="window.location.href='/dashboard';">Dashboard</button>
-            <button onclick="window.location.href='Offers';">Manage Offers</button>
-            <a href="/Logout">Logout</a>
+            <button class="nav-button" onclick="window.location.href='ownerProfile';">Profile</button>
+            <button class="nav-button" onclick="window.location.href='/dashboard';">Dashboard</button>
+            <!--<button onclick="window.location.href='Offers';">Manage Offers</button>-->
+            <a href="/Logout" class="nav-button logout-button">Logout</a>
         </nav>
     </header>
 
@@ -69,6 +74,13 @@
 
 
     <style>
+        :root {
+            --primary-color: #e67e22;
+            --secondary-color: #333;
+            --accent-color: darkblue;
+            --background-color: #f0f0f0;
+        }
+
         html,
         body {
             background-color: #f9f9f9;
@@ -87,12 +99,23 @@
         }
 
         header {
-            background-color: #004080;
+            background-color: #fffcfc;
             color: white;
-            padding: 10px 20px;
+            padding: 15px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            box-shadow: 0px 7px 9px rgba(0, 0, 0, 0.1);
+            height: auto;
+            border-bottom: 7px solid #efb300;
+        }
+
+        header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            color: var(--accent-color);
+
         }
 
         nav {
@@ -101,16 +124,36 @@
         }
 
         nav a {
+            background-color: #efb300;
+            border-radius: 5px;
+            padding: 10px 20px;
             color: white;
             text-decoration: none;
-            padding: 10px 20px;
-            border-radius: 10px;
-            background-color: #48535f;
+            font-size: 14pt;
+            margin: 0 10px;
             transition: background-color 0.3s;
         }
 
-        nav a:hover {
-            background-color: darkorange;
+        .nav-button {
+            display: inline-block;
+            color: white;
+            background-color: var(--accent-color);
+            padding: 12px 25px;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s, box-shadow 0.3s ease;
+            margin: 5px 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-button:hover {
+            background-color: var(--primary-color);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .logout-button:hover {
+            background-color: red;
         }
 
         #itemList {
@@ -126,7 +169,7 @@
             background-color: #fff;
             border: 1px solid #ddd;
             border-radius: 5px;
-            width: 250px;
+            width: 500px;
             /* Fixed width to match plus icon */
             height: 350px;
             /* Fixed height for consistency */
@@ -194,15 +237,21 @@
             /* Allow paragraphs to take available space */
             text-align: center;
             /* Center text within the item box */
-            font-size: 13px;
+            font-size: 18px;
         }
 
 
         /* Responsive design */
         @media (max-width: 768px) {
             .item {
-                width: calc(50% - 20px);
+                width: 100%;
                 /* Two items per row on smaller screens */
+            }
+
+            button {
+                padding: 5px 10px;
+                font-size: 14px;
+                margin-top: 5px;
             }
         }
 
@@ -211,6 +260,7 @@
                 width: 100%;
                 /* One item per row on mobile devices */
             }
+
         }
 
         .container {
@@ -227,7 +277,7 @@
 
         .shop-owner-panel h2 {
             color: white;
-            font-size: 18px;
+            font-size: 26px;
             text-align: center;
             background-color: #8c9aa8;
             padding: 15px;
@@ -244,7 +294,7 @@
             color: white;
             cursor: pointer;
             transition: background-color 0.3s;
-            font-size: 14px;
+            font-size: 16px;
             margin-top: 10px;
         }
 
@@ -327,6 +377,29 @@
 
         input::placeholder {
             font-size: 15px;
+        }
+
+        .logoRestaurantName {
+            padding-left: 3%;
+            display: flex;
+            width: 700px;
+            gap: 5%;
+
+        }
+
+        .logoRestaurantName h1 {
+            margin-top: 2%;
+        }
+
+        .logo img {
+            height: 50px;
+
+        }
+
+        .logo img:hover {
+
+            transition: transform 0.3s ease;
+            transform: scale(1.1);
         }
     </style>
 

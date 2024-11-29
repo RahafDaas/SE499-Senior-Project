@@ -48,8 +48,8 @@ const restaurantSchema = new mongoose.Schema(
     ownerId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Owner",
-      required: true,
     },
+    category: { type: String },
   },
   { timestamps: true }
 );

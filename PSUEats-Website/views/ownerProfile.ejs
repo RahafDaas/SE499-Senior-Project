@@ -18,17 +18,21 @@
 
   <div class="profileContainer">
     <h1 id="profileFormHead">Edit Your Profile</h1>
-    <form id="Profile-form" action="/update-profile" method="POST">
+    <form id="Profile-form" action="/update-profile" method="POST" onclick="phoneValidation()">
 
       <div class="ProfileInputFields" id="Username">
         <input type="text" name="name" value="<%= user.name %>" placeholder="Name" id="name" required>
         <small class="description">Your Shop Name</small>
       </div>
       <div class="ProfileInputFields" id="PhoneNum">
+        <i class="fa-regular fa-circle-check" id="correctPhoneIcon" style="display: none;"></i>
+        <i class="fa-regular fa-circle-xmark" id="wrongPhoneIcon" style="display: none;"></i>
 
-        <input type="tel" name="phoneNum" value="<%= user.phoneNum %>" placeholder="Phone" id="phoneNum" required>
+        <input type="tel" name="phoneNum" onkeyup="phoneValidation()" value="<%= user.phoneNum %>" placeholder="Phone"
+          id="phoneNum" required>
         <small class="description">Your Contact Phone Number</small>
       </div>
+      <span id="phoneError" class="errorMseg"></span>
       <div class="ProfileInputFields" id="workingHr">
 
         <input type="text" name="workingHr" placeholder="Working Hours" id="workingHr">
@@ -116,7 +120,7 @@
       color: grey;
     }
 
-    small {
+    .ProfileInputFields small {
       font-size: 10px;
       color: gray;
       margin-right: 10px;
@@ -152,6 +156,13 @@
       background: lightgray;
       color: gray;
     }
+
+    .errorMseg {
+      color: red;
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+    }
   </style>
 
 
@@ -178,8 +189,35 @@
       }
       return false; // Prevent form submission if canceled
     }
+    function phoneValidation() {
+      var phoneNum = document.getElementById("phoneNum").value;
+      const phoneError = document.getElementById("phoneError");
+      const correctIcon = document.getElementById("correctPhoneIcon");
+      const wrongIcon = document.getElementById("wrongPhoneIcon");
+
+      if (phoneNum.length == 0) {
+        phoneError.innerHTML = "Phone number is required";
+        correctIcon.style.display = "none";
+        wrongIcon.style.display = "block";
+        return false;
+      }
+
+      const phonePattern = /^[0-9]{10}$/;
+      if (!phonePattern.test(phoneNum)) {
+        phoneError.innerHTML = "Phone number should be 10 digits";
+        correctIcon.style.display = "none";
+        wrongIcon.style.display = "block";
+        return false;
+      }
+
+      phoneError.innerHTML = "";
+      correctIcon.style.display = "block";
+      wrongIcon.style.display = "none";
+      return true;
+    }
 
   </script>
+  <script src="../script.js"></script>
 </body>
 
 </html>

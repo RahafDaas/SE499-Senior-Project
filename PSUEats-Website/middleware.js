@@ -25,7 +25,7 @@ function isAuthenticated(req, res, next) {
   if (req.session.userId) {
     next();
   } else {
-    res.redirect("/Login");
+    return res.redirect("/login?message=Please log in to access the homepage.");
   }
 }
 

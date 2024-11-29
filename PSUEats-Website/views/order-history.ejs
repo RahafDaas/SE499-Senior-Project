@@ -7,12 +7,32 @@
     <title>Order History</title>
     <style>
         /* Global styles */
+        :root {
+            --primary-color: #e67e22;
+            --secondary-color: #333;
+            --accent-color: darkblue;
+            --background-color: #f0f0f0;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            background-color: #f8f9fa;
+            font-family: Arial, Helvetica, sans-serif;
+            width: 100%;
+            height: auto;
+            padding-right: 10%;
+            padding-left: 0%;
+            margin: 0%;
+            background: linear-gradient(to bottom right, var(--background-color), #ffffff);
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            background-color: #fffcfc;
+            box-shadow: 0px 7px 9px rgba(0, 0, 0, 0.1);
+            margin: 0%;
+            height: 100px;
         }
 
         h1 {
@@ -25,44 +45,44 @@
             color: #1d3557;
         }
 
-        header {
-            height: 90px;
-            background-color: #1d3557;
-            color: white;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
+
 
         header h1 {
             font-size: 1.8rem;
             margin: 0;
             flex: 1;
+            color: var(--accent-color);
         }
 
         nav {
             display: flex;
             align-items: center;
             gap: 15px;
+            margin-top: 2%;
         }
 
-        nav a {
-            background-color: #efb300;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
+        .nav-button {
+            display: inline-block;
             color: white;
+            background-color: var(--accent-color);
+            padding: 12px 25px;
+            text-align: center;
             text-decoration: none;
-            transition: background-color 0.3s;
-            font-size: 1rem;
+            border-radius: 5px;
+            transition: background-color 0.3s, box-shadow 0.3s ease;
+            margin: 5px 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
 
-        nav a:hover {
-            background-color: #d80000;
+        .nav-button:hover {
+            background-color: var(--primary-color);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
         }
+
+        .logout-button:hover {
+            background-color: red;
+        }
+
 
         .order-history-container {
             width: 90%;
@@ -147,15 +167,110 @@
                 width: 100%;
             }
         }
+
+        @media screen and (max-width: 590px) {
+            body {
+                margin: 0% !important;
+                padding: 0% !important;
+                box-sizing: border-box;
+                overflow-x: hidden;
+                /* Prevent horizontal scrolling */
+                width: 100%;
+                /* Ensure full viewport width */
+            }
+
+            header {
+
+                flex-direction: column;
+                align-items: start;
+                margin: 0%;
+                padding: 0%;
+                width: 100%;
+                height: auto;
+                padding-bottom: 5px;
+
+            }
+
+            nav {
+                flex-direction: column;
+                gap: 10px;
+                width: 100%;
+            }
+
+            .logoRestaurantName {
+                padding-left: 3%;
+                display: flex;
+                justify-content: start;
+                flex-direction: column !important;
+
+            }
+
+            .logoRestaurantName h1 {
+                margin-left: 130px;
+            }
+
+            nav a {
+                width: 70%;
+                margin-top: 3%;
+            }
+
+            nav {
+                align-items: center;
+                text-align: center;
+            }
+        }
+
+        .logo img {
+            height: 50px;
+
+        }
+
+        .logo img:hover {
+
+            transition: transform 0.3s ease;
+            transform: scale(1.1);
+        }
+
+        .logoRestaurantName {
+            display: flex;
+            flex-direction: row;
+            justify-content: start;
+            gap: 6%;
+            width: 600px
+        }
+
+        .logoRestaurantName h1 {
+            margin-top: 2%;
+            color: var(--accent-color);
+        }
+
+        @media screen and (min-width:350px)and (max-width: 440px) {
+            * {
+                font-size: 0.9rem;
+            }
+
+            body {
+                padding: 0%;
+                margin: 0%;
+                width: 100%;
+            }
+
+        }
     </style>
 </head>
 
 <body>
     <header>
-        <h1>Order History</h1>
+        <div class="logoRestaurantName">
+            <div class="logo">
+                <img src="./images/psueatslogo.png" alt="PSUEats Logo" />
+            </div>
+            <h1>Order History</h1>
+        </div>
+
         <nav>
-            <a href="/home">Home</a>
-            <a href="/logout">Logout</a>
+            <a href="/home" class="nav-button">Home</a>
+            <a href="/logout" class="nav-button logout-button">Logout</a>
         </nav>
     </header>
 
@@ -193,14 +308,17 @@
                                 <h4>Items:</h4>
                                 <ul>
                                     <% order.orders.forEach(item=> { %>
+                                        <li><span>Shop: <%= item.shopName %></span></li>
                                         <li>
                                             <%= item.dishName %> x <%= item.quantity %> item/s
+
                                         </li>
+
                                         <% }) %>
                                 </ul>
                             </div>
                         </div>
-                        <hr />
+
                         <% }) %>
                             <% } %>
         </div>
@@ -224,6 +342,7 @@
                 .then(data => {
                     if (data.success) {
                         document.getElementById(`order-${orderId}`).remove();
+                        alert('Order Deleted Successfully!');
                     } else {
                         alert('Failed to delete order.');
                     }

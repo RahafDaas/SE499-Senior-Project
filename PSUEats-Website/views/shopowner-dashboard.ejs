@@ -7,8 +7,16 @@
     <title>Shop Owner Dashboard</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://kit.fontawesome.com/6991b496f2.js" crossorigin="anonymous"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <style>
+        :root {
+            --primary-color: #e67e22;
+            --secondary-color: #333;
+            --accent-color: darkblue;
+            --background-color: #f0f0f0;
+        }
+
         html,
         body {
             background-color: #f9f9f9;
@@ -27,30 +35,78 @@
         }
 
         header {
-            background-color: #004080;
+            background-color: #fffcfc;
             color: white;
-            padding: 10px 20px;
+            padding: 15px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            box-shadow: 0px 7px 9px rgba(0, 0, 0, 0.1);
+            height: auto;
+            border-bottom: 7px solid #efb300;
+        }
+
+        header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            color: var(--accent-color);
+
         }
 
         nav {
-            display: flex;
-            gap: 20px;
-        }
-
-        nav a {
             color: white;
             text-decoration: none;
-            padding: 10px 20px;
-            border-radius: 10px;
-            background-color: #48535f;
+            margin-left: 20px;
+            padding: 8px 15px;
+            border-radius: 8px;
             transition: background-color 0.3s;
         }
 
-        nav a:hover {
-            background-color: darkorange;
+        nav a {
+            background-color: #efb300;
+            border-radius: 5px;
+            padding: 10px 20px;
+            color: white;
+            text-decoration: none;
+            font-size: 14pt;
+            margin: 0 10px;
+            transition: background-color 0.3s;
+
+        }
+
+        nav button {
+            background-color: #efb300;
+            border-radius: 5px;
+            padding: 10px 20px;
+            color: white;
+            text-decoration: none;
+            font-size: 14pt;
+            margin: 0 10px;
+            transition: background-color 0.3s;
+
+        }
+
+        .nav-button {
+            display: inline-block;
+            color: white;
+            background-color: var(--accent-color);
+            padding: 12px 25px;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s, box-shadow 0.3s ease;
+            margin: 5px 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-button:hover {
+            background-color: var(--primary-color);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .logout-button:hover {
+            background-color: red;
         }
 
         .container {
@@ -69,11 +125,25 @@
             color: white;
             font-size: 18px;
             text-align: center;
-            background-color: #8c9aa8;
+            background-color: var(--accent-color);
             padding: 15px;
             border-radius: 5px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
         }
+
+        .h2 {
+            color: white;
+            font-size: 18px;
+            text-align: center;
+            background-color: var(--accent-color);
+            padding: 15px;
+            margin-left: 100px;
+            margin-right: 100px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+
 
         .table-container {
             max-height: 400px;
@@ -140,53 +210,6 @@
             background-color: #ff0000;
         }
 
-        .report-section {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            margin-top: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            /* Add spacing between elements */
-        }
-
-        .report-section label {
-            font-size: 16px;
-            font-weight: bold;
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .report-section select,
-        .report-section input {
-            margin: 10px 0;
-            padding: 10px;
-            width: 100%;
-            max-width: 300px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-            font-size: 14px;
-        }
-
-        .report-section button {
-            margin-top: 10px;
-            padding: 10px 20px;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .report-section button:hover {
-            background-color: #218838;
-        }
-
         button {
             padding: 10px 20px;
             border: none;
@@ -228,13 +251,17 @@
                 overflow-x: auto;
             }
 
-            .analytics-section {
-                padding: 10px;
+            .logoRestaurantName {
+                align-items: center;
+                display: flex;
+                justify-content: start;
+                flex-direction: column !important;
+
             }
 
-            .analytics-section select,
-            .analytics-section input[type="date"] {
-                max-width: 100%;
+            header {
+                justify-content: center;
+                align-items: center;
             }
         }
 
@@ -276,19 +303,47 @@
             margin-right: 5px;
             /* Optional: Adjust the spacing between buttons */
         }
+
+        .logoRestaurantName {
+            padding-left: 3%;
+            display: flex;
+            width: 700px;
+            gap: 5%;
+
+        }
+
+        .logoRestaurantName h1 {
+            margin-top: 2%;
+        }
+
+        .logo img {
+            height: 50px;
+
+        }
+
+        .logo img:hover {
+
+            transition: transform 0.3s ease;
+            transform: scale(1.1);
+        }
     </style>
 </head>
 
 <body>
 
     <header>
-        <h1>PSUEats</h1>
+        <div class="logoRestaurantName">
+            <div class="logo">
+                <img src="./images/psueatslogo.png" alt="PSUEats Logo" />
+            </div>
+            <h1>Shop Owner Dashboard</h1>
+        </div>
+
         <nav>
 
-            <button onclick="window.location.href='ownerProfile';">Profile</button>
+            <button class="nav-button" onclick="window.location.href='ownerProfile';">Profile</button>
 
-            <a href="/logout">Logout</a>
-
+            <a href="/logout" class="nav-button logout-button">Logout</a>
         </nav>
     </header>
 
@@ -312,7 +367,7 @@
                     <tbody id="orders-list">
                         <% if (orders && orders.length> 0) { %>
                             <% orders.forEach(order=> { %>
-                                <% const itemsForShop=order.orders.filter(item=> item.shopName === name); %>
+                                <% const itemsForShop=order.orders.filter(item=> item.shopName === ShopName); %>
                                     <% const totalPrice=itemsForShop.reduce((sum, item)=> sum + ((item.price || 0) *
                                         (item.quantity || 1)), 0); %>
 
@@ -446,15 +501,8 @@
                                                                 <% } %>
                     </tbody>
 
-
-
-
-
-
                 </table>
             </div>
-
-
 
             <h2>Menu Items</h2>
             <div class="table-container">
@@ -506,93 +554,11 @@
                 </table>
             </div>
 
-            <h2><button onclick="window.location.href='menuMgmnt';">Add Menu Items</button></h2>
-            <div class="report-section">
-                <h2 style="color:#066ab1; background-color: white; box-shadow: none;">Generate Report</h2>
-
-                <button onclick="generateReport()">Download Report</button>
-            </div>
-            <script>
-                document.querySelectorAll('input[type="file"]').forEach(input => {
-                    input.addEventListener('change', function (event) {
-                        const file = event.target.files[0];
-                        if (file) {
-                            const reader = new FileReader();
-                            reader.onload = function (e) {
-                                // Display the new image in the existing img tag for preview
-                                const previewImg = event.target.previousElementSibling;
-                                previewImg.src = e.target.result;
-                            };
-                            reader.readAsDataURL(file);
-                        }
-                    });
-                });
-
-                function generateReport() {
-                    const date = new Date().toLocaleString();
-                    let reportContent = `
-        <h1>Shop Owner Report</h1>
-        <h2>Date: ${date}</h2>
-        <h2>Orders Managment</h2>
-        <table border="1" style=" border: 1px solid black; border-collapse: collapse;" border="1">
-            <tr>
-                <th style="background-color: #066ab1; color: white">Order ID</th>
-                <th style="background-color: #066ab1; color: white">User Email</th>
-                <th style="background-color: #066ab1; color: white">Dish Name</th>
-                <th style="background-color: #066ab1; color: white">Price</th>
-                <th style="background-color: #066ab1; color: white">Payment Method</th>
-                <th style="background-color: #066ab1; color: white">Order Status</th>
-            </tr>`;
-
-                    const ordersList = Array.from(document.querySelectorAll('#orders-list tr'));
-                    ordersList.forEach(row => {
-                        const cells = row.querySelectorAll('td:not(:last-child)'); // Skip the action buttons
-                        reportContent += `<tr>
-            <td>${cells[0].textContent}</td>
-            <td>${cells[1].textContent}</td>
-            <td>${cells[2].textContent}</td>
-            <td>${cells[3].textContent}</td>
-            <td>${cells[4].textContent}</td>
-            <td>${cells[5].textContent}</td>
-        </tr>`;
-                    });
-
-                    reportContent += `</table><h2>Menu Items</h2><table style=" border: 1px solid black; border-collapse: collapse;" border="1"><tr>
-            <th style="background-color: #066ab1; color: white">Dish Picture</th>
-                <th style="background-color: #066ab1; color: white">Dish Name</th>
-                <th style="background-color: #066ab1; color: white">Price</th>
-                <th style="background-color: #066ab1; color: white">Calories</th>
-            </tr>`;
-
-                    const menuItems = Array.from(document.querySelectorAll('#menu-items tr'));
-                    menuItems.forEach(row => {
-                        const cells = row.querySelectorAll('td:not(:last-child)'); // Skip the action buttons
-                        reportContent += `<tr>
-            <td>${cells[0].textContent}</td>
-            <td>${cells[1].textContent}</td>
-            <td>${cells[2].textContent}</td>
-            <td>${cells[3].textContent}</td>
-            
-        </tr>`;
-                    });
-
-                    reportContent += `</table>`;
-                    const blob = new Blob([reportContent], { type: 'text/html' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = 'shop_owner_report.html';
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-                }
-            </script>
-
-
+            <div class="h2"><button onclick="window.location.href='menuMgmnt';">Add Menu Items</button></div>
 
         </div>
     </div>
+
 
 </body>
 

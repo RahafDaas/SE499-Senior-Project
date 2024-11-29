@@ -147,7 +147,7 @@ function formValidation() {
     !nameValidation ||
     !emailValidation ||
     !phoneValidation ||
-    !passCofirmValidation ||
+    !passConfirmValidation ||
     !passValidation
   )
     return false;

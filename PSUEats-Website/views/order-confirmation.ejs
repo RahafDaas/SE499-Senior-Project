@@ -7,6 +7,13 @@
     <title>Order Confirmation</title>
     <style>
         /* Global styles */
+        :root {
+            --primary-color: #e67e22;
+            --secondary-color: #333;
+            --accent-color: darkblue;
+            --background-color: #f0f0f0;
+        }
+
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -15,13 +22,26 @@
             background-color: #f8f9fa;
         }
 
-        h1,
-        h2 {
-            color: #ffffff;
-        }
+
 
         header {
-            height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            background-color: #fffcfc;
+            box-shadow: 0px 7px 9px rgba(0, 0, 0, 0.1);
+            margin: 0%;
+            height: 100px;
+            flex-wrap: wrap;
+
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            margin: 0;
+            flex: 1;
+            color: var(--accent-color);
         }
 
         .order-container {
@@ -123,56 +143,34 @@
             }
         }
 
-        header {
-            background-color: #1d3557;
-            color: white;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
-            /* Allows wrapping on smaller screens */
-        }
-
-        header h1 {
-            font-size: 1.8rem;
-            margin: 0;
-            flex: 1;
-        }
-
         nav {
             display: flex;
             align-items: center;
             gap: 15px;
+            margin-top: 2%;
         }
 
-        nav a:first-child {
-            background-color: #efb300;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
+        .nav-button {
+            display: inline-block;
             color: white;
+            background-color: var(--accent-color);
+            padding: 12px 25px;
+            text-align: center;
             text-decoration: none;
-            transition: background-color 0.3s;
-            text-decoration: none;
-            font-size: 1rem;
-        }
-
-        nav a:nth-child(2) {
-            background-color: #d80000;
-            border: none;
-            padding: 10px 20px;
             border-radius: 5px;
-            cursor: pointer;
-            color: white;
-            text-decoration: none;
-            transition: background-color 0.3s;
-            text-decoration: none;
-            font-size: 1rem;
+            transition: background-color 0.3s, box-shadow 0.3s ease;
+            margin: 5px 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
 
+        .nav-button:hover {
+            background-color: var(--primary-color);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .logout-button:hover {
+            background-color: red;
+        }
 
 
         .cart-icon {
@@ -192,15 +190,109 @@
             font-size: 0.8rem;
             font-weight: bold;
         }
+
+        @media screen and (max-width: 590px) {
+            body {
+                margin: 0% !important;
+                padding: 0% !important;
+                box-sizing: border-box;
+                overflow-x: hidden;
+                /* Prevent horizontal scrolling */
+                width: 100%;
+                /* Ensure full viewport width */
+            }
+
+            header {
+
+                flex-direction: column;
+                align-items: start;
+                margin: 0%;
+                padding: 0%;
+                width: 100%;
+                height: auto;
+                padding-bottom: 5px;
+
+            }
+
+            nav {
+                flex-direction: column;
+                gap: 10px;
+                width: 100%;
+            }
+
+            .logoRestaurantName {
+                padding-left: 3%;
+                display: flex;
+                justify-content: start;
+                flex-direction: column !important;
+
+            }
+
+            .logoRestaurantName h1 {
+                margin-left: 130px;
+            }
+
+            nav a {
+                width: 70%;
+                margin-top: 3%;
+            }
+
+            nav {
+                align-items: center;
+                text-align: center;
+            }
+        }
+
+        .logo img {
+            height: 50px;
+
+        }
+
+        .logo img:hover {
+
+            transition: transform 0.3s ease;
+            transform: scale(1.1);
+        }
+
+        .logoRestaurantName {
+            display: flex;
+            flex-direction: row;
+            justify-content: start;
+            gap: 6%;
+            width: 600px
+        }
+
+        .logoRestaurantName h1 {
+            margin-top: 2%;
+            color: var(--accent-color);
+        }
+
+        @media screen and (min-width:350px)and (max-width: 440px) {
+            * {
+                font-size: 0.9rem;
+            }
+
+            body {
+                padding: 0%;
+                margin: 0%;
+                width: 100%;
+            }
+
+        }
     </style>
 </head>
 
 <body>
     <header>
-        <h1>Order Confirmation</h1>
+        <div class="logoRestaurantName">
+            <div class="logo">
+                <img src="./images/psueatslogo.png" alt="PSUEats Logo" />
+            </div>
+            <h1>Order Confirmation</h1>
+        </div>
         <nav>
-            <a href="/home">Home</a>
-            <a href="/logout">Logout</a>
+            <a href="/home" class="nav-button">Home</a>
+            <a href="/logout" class="nav-button logout-button">Logout</a>
             <div class="cart-icon" onclick="viewCart()">
                 🛒 <span id="cartCount">0</span>
             </div>
@@ -209,7 +301,7 @@
     </header>
     <div class="order-container">
         <div class="order-header">
-            <h1 style="color: #1d3557  !important;">Order Confirmation</h1>
+            <h1 style="color: var(--accent-color) !important;">Order Details</h1>
         </div>
 
         <div class="order-details">
@@ -253,7 +345,8 @@
             <form action="/update-status/<%= order._id %>" method="POST">
                 <button type="submit" id="update-status-btn">Update Status</button>
             </form>
-            <button id="review-order-btn" onclick="redirectToReview('<%= order._id %>')">Review Order</button>
+            <button id="review-order-btn"
+                onclick="redirectToReview('<%= order._id %>', '<%= order.orders[0].shopName %>')">Review Order</button>
         </div>
     </div>
 
@@ -261,8 +354,10 @@
         // Clear local storage
         sessionStorage.clear();
         // Function to redirect to the reviewOrder page
-        function redirectToReview(orderId) {
-            window.location.href = `reviewOrder.html`;
+        function redirectToReview(orderId, shopName) {
+            // Encode the shop name to ensure it's safe for URL
+            const encodedShopName = encodeURIComponent(shopName);
+            window.location.href = `reviewOrder.html?shopName=${encodedShopName}`;
         }
     </script>
 </body>
