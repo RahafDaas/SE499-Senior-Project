@@ -46,7 +46,7 @@ These packages, along with the Agile Scrum framework, have enabled PSUEats to ev
 
 - [Somou Saidam] () (https://github.com/SomouMS) (https://www.linkedin.com/in/somou-saidam-941b7b2a3/)
 - [Leen Al Roomi] () (https://github.com/leenalroomi) (https://www.linkedin.com/in/leen-alroomi-140879267/)
-- [Raneem El Hajj] () (https://github.com/eng-Raneem-Haitham) (https://www.linkedin.com/in/raneem-elhajj-49318829b/)
+- [Raneem El Hajj] (Raneemelhajj10@gmail.com) (https://github.com/eng-Raneem-Haitham) (https://www.linkedin.com/in/raneem-elhajj-49318829b/)
 - [ Al Jouri Al Beshri] () (https://github.com/Jouriab) (https://www.linkedin.com/in/aljouri-albeshri-4a463a236/)
 
 ## Supervised By
