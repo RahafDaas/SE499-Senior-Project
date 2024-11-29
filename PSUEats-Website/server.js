@@ -663,57 +663,47 @@ app.delete("/order/delete/:orderId", (req, res) => {
 });
 
 // Handle checkout
-app.post("/checkout", isAuthenticated, async (req, res) => {
+app.post("/checkout", async (req, res) => {
   try {
     const { orders, pickupTime, paymentMethod, totalPrice } = req.body;
+    const user = await User.findById(req.session.userId);
 
-    const userId = req.session.userId;
-
-    // Retrieve the user by userId to get user details, including email
-    const user = await User.findById(userId);
-    // Create a new order with user email and other order details
     const order = new Order({
       orders,
       pickupTime,
       paymentMethod,
       totalPrice,
-      email: user.email, // Access email from the retrieved user document
+      email: user.email,
       paymentStatus: "Pending",
       orderStatus: "Pending",
       createdAt: new Date(),
     });
 
-    // Save the order
     await order.save();
-
-    // Add the new order ID to the user's orders array
     user.orders.push(order._id);
     await user.save();
 
-    //res.json({ success: true, message: "Order successfully created." });
     if (paymentMethod === "pay on pick up") {
       return res.redirect(`/order-confirmation?id=${order._id}`);
     }
     if (paymentMethod === "psueats points") {
       const totalPriceNum = parseFloat(totalPrice);
-
       if (user.psueatsPoints < totalPriceNum) {
-        return res.status(400).json({ error: "Insufficient PSUEats Points." });
-      }
-      if (isNaN(totalPriceNum)) {
-        return res.status(400).json({ error: "Invalid total price." });
+        return res.status(400).json({ error: "Insufficient Points." });
       }
       user.psueatsPoints -= totalPriceNum;
       order.paymentStatus = "Paid";
-      await order.save();
-
       await user.save();
-
+      return res.redirect(`/order-confirmation?id=${order._id}`);
+    }
+    if (paymentMethod === "online") {
+      order.paymentStatus = "Paid";
+      await order.save();
       return res.redirect(`/order-confirmation?id=${order._id}`);
     }
   } catch (error) {
-    console.error("Error during checkout:", error);
-    res.status(500).json({ success: false, message: "Checkout failed", error });
+    console.error("Checkout error:", error);
+    res.status(500).json({ error: "An error occurred during checkout." });
   }
 });
 

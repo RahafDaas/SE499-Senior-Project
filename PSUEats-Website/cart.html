@@ -474,6 +474,78 @@
             font-size: 14px;
             color: #333;
         }
+
+        .payment-form {
+            max-width: 700px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            font-family: Arial, sans-serif;
+            align-items: center;
+        }
+
+        .payment-form h3 {
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            color: #333;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.9em;
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            font-size: 1em;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus {
+            border-color: #007BFF;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+
+        .payment-form input::placeholder {
+            color: #aaa;
+        }
+
+        .payment-form button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            font-size: 1em;
+            color: #fff;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .payment-form button:hover {
+            background-color: #0056b3;
+        }
+
+        .payment-form button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 
@@ -518,6 +590,30 @@
             </select>
         </div>
         <p id="points" style="display: none;">Your PSUEats Points: <span id="points-available">0</span></p>
+
+        <!-- Online payment form -->
+        <div id="online-payment-form" style="display: none;" class="payment-form">
+            <h3>Online Payment</h3>
+            <form id="payment-form">
+                <div class="form-group">
+                    <label for="card-holder">Card Holder Name:</label>
+                    <input type="text" id="card-holder" placeholder="John Doe" required />
+                </div>
+                <div class="form-group">
+                    <label for="card-number">Card Number:</label>
+                    <input type="text" id="card-number" maxlength="16" placeholder="1234 5678 9101 1121" required />
+                </div>
+                <div class="form-group">
+                    <label for="expiry-date">Expiry Date:</label>
+                    <input type="month" id="expiry-date" required />
+                </div>
+                <div class="form-group">
+                    <label for="cvv">CVV:</label>
+                    <input type="text" id="cvv" maxlength="3" placeholder="123" required />
+                </div>
+            </form>
+        </div>
+
         <!-- Scheduling Pickup Time -->
         <div class="pickup-schedule">
             <label for="pickup-time">⏰ Schedule Pickup Time:</label>
@@ -596,10 +692,34 @@
                 }
             } else {
                 pointsSection.style.display = 'none';
+                if (paymentMethod === 'online') {
+                    const cardHolder = document.getElementById('card-holder').value;
+                    const cardNumber = document.getElementById('card-number').value;
+                    const expiryDate = document.getElementById('expiry-date').value;
+                    const cvv = document.getElementById('cvv').value;
+
+                    if (!cardHolder || !cardNumber || !expiryDate || !cvv) {
+                        showError('Please fill out all payment details.');
+                        return;
+                    } else {
+                        showError('');
+                    }
+                    // Validate Card Number
+                    if (!/^\d{16}$/.test(cardNumber)) {
+                        showError('Invalid card number. Please enter a valid 16-digit card number.');
+                        return;
+                    } else { showError('') }
+                    // Validate CVV
+                    if (!/^\d{3}$/.test(cvv)) {
+                        showError('Invalid CVV. Please enter a 3 or 4-digit CVV.');
+                        return;
+                    } else { showError('') }
+                }
             }
 
             modal.style.display = 'block';
         });
+
 
         confirmYesButton.addEventListener('click', () => {
             // Retrieve data from sessionStorage
@@ -743,7 +863,13 @@
             const paymentMethod = event.target.value;
             const pointsSection = document.getElementById('points');
             const pointsAvailable = document.getElementById('points-available');
+            const paymentDiv = document.getElementById('online-payment-form');
 
+            // Reset sections visibility
+            pointsSection.style.display = 'none';
+            paymentDiv.style.display = 'none';
+
+            // Handle "PSUEats Points" option
             if (paymentMethod === 'psueats points') {
                 pointsSection.style.display = 'block';
                 try {
@@ -754,9 +880,14 @@
                     console.error('Error fetching PSUEats Points:', error);
                     showError("Failed to retrieve PSUEats Points. Please try again.");
                 }
-            } else {
-                pointsSection.style.display = 'none';
             }
+
+            // Handle "Online" payment option
+            if (paymentMethod === 'online') {
+                paymentDiv.style.display = 'block';
+            }
+
+            // No special action for "Pay on Pickup" since it does not require additional UI changes.
         });
 
 
