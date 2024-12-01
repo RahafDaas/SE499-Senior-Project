@@ -12,7 +12,7 @@ const data = require("./data");
 // Set up storage configuration for multer
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads/"); // Directory where files will be saved
+    cb(null, "./uploads/"); // Directory where files will be saved
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + path.extname(file.originalname)); // Append timestamp to filename
@@ -41,7 +41,10 @@ const MONGO_URI =
 // Middleware
 app.use(express.static(path.join(__dirname))); // Serve static files
 app.use(express.urlencoded({ extended: false })); // Parse form data
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use(
+  "/uploads",
+  express.static(path.join(__dirname, "PSUEats-Website/uploads")),
+);
 app.use(express.json());
 
 // Connect to MongoDB
@@ -68,7 +71,7 @@ app.use(
       httpOnly: true, // Prevent client-side JS from accessing the cookies
       sameSite: "strict", // Prevent CSRF
     },
-  })
+  }),
 );
 /*
 // Handle unknown routes
@@ -189,7 +192,7 @@ app.post("/shopowner-signup", upload.single("iqamaID"), async (req, res) => {
     // Check if the shop owner already exists
     const existingShopOwner = await ShopOwner.findOne(
       { phoneNum },
-      { ShopName }
+      { ShopName },
     );
     if (existingShopOwner) {
       return res.status(400).send("Shop owner already exists.");
@@ -217,7 +220,7 @@ app.post("/shopowner-signup", upload.single("iqamaID"), async (req, res) => {
     await newShopOwner.save();
 
     res.send(
-      "Signup successful! Your request is pending approval and will be reviewed by the admin."
+      "Signup successful! Your request is pending approval and will be reviewed by the admin.",
     );
   } catch (err) {
     console.error("Error during shop owner signup:", err);
@@ -392,7 +395,7 @@ app.post("/approveShopOwner/:id", isAdmin, async (req, res) => {
     const updatedShopOwner = await ShopOwner.findByIdAndUpdate(
       id,
       { isApproved: true },
-      { new: true }
+      { new: true },
     );
     if (!updatedShopOwner)
       return res.status(404).json({ message: "Shop Owner not found" });
@@ -795,7 +798,7 @@ app.post("/update-order-status", isAuthenticated, async (req, res) => {
       order.paymentStatus = "Paid";
     } else {
       console.log(
-        "paymentStatus not updated since orderStatus is not in the specified list"
+        "paymentStatus not updated since orderStatus is not in the specified list",
       );
     }
 
@@ -853,14 +856,14 @@ app.post(
         await Restaurant.findOneAndUpdate(
           { "food.dishname": originalDishname },
           { $set: updateFields },
-          { new: true }
+          { new: true },
         );
       } else if (action === "delete") {
         // Delete the food item
         await Restaurant.findOneAndUpdate(
           { "food.dishname": originalDishname },
           { $pull: { food: { dishname: originalDishname } } },
-          { new: true }
+          { new: true },
         );
       }
       res.redirect("/dashboard"); // Redirect or respond with success
@@ -868,7 +871,7 @@ app.post(
       console.error("Error updating food item:", error);
       res.status(500).send("An error occurred while updating the food item.");
     }
-  }
+  },
 );
 
 // =======================================
@@ -884,7 +887,7 @@ app.post("/update-status/:id", isAuthenticated, async (req, res) => {
     const updatedOrder = await Order.findByIdAndUpdate(
       orderId,
       { orderStatus: status },
-      { new: true }
+      { new: true },
     );
 
     if (updatedOrder) {
@@ -928,7 +931,7 @@ app.post("/add-food-item/:restaurantId", async (req, res) => {
       return res
         .status(404)
         .send(
-          "Restaurant not found or you do not have permission to add items."
+          "Restaurant not found or you do not have permission to add items.",
         );
     }
 
@@ -1203,7 +1206,7 @@ app.post("/addOffer", async (req, res) => {
 
     // Step 3: Find the food item by its dishname (instead of _id)
     const foodItem = restaurant.food.find(
-      (item) => item.dishname === req.body.dishname
+      (item) => item.dishname === req.body.dishname,
     );
 
     if (!foodItem) {
