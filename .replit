@@ -1,0 +1,13 @@
+modules = ["web", "nodejs-20"]
+run = "node server"
+
+[nix]
+channel = "stable-24_05"
+
+[deployment]
+run = ["sh", "-c", "node PSUEats-Website/server.js"]
+build = ["sh", "-c", " npm init -y && npm i "]
+
+[[ports]]
+localPort = 3000
+externalPort = 80

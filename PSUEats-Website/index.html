@@ -1,195 +1,284 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+    <head>
+        <!-- general meta tags -->
+        <meta charset="utf-8" />
+        <meta name="author" content="" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <!-- site specific tags -->
+        <title>PSUEats | Registeration</title>
+        <link rel="stylesheet" href="style.css" />
+        <script
+            src="https://kit.fontawesome.com/6991b496f2.js"
+            crossorigin="anonymous"
+        ></script>
+        <script src="script.js"></script>
+        <style>
+            .field_btn {
+                display: flex;
+                justify-content: center;
+                margin-top: 30px;
+            }
 
-<head>
-    <!-- general meta tags -->
-    <meta charset="utf-8">
-    <meta name="author" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- site specific tags -->
-    <title> PSUEats | Registeration</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://kit.fontawesome.com/6991b496f2.js" crossorigin="anonymous"></script>
-    <script src="script.js"></script>
-    <style>
-        .field_btn {
-            display: flex;
-            justify-content: center;
-            margin-top: 30px;
-        }
+            #signup_btn {
+                padding: 10px 20px;
+                font-size: 16px;
+                cursor: pointer;
+            }
 
-        #signup_btn {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-        }
+            /* Message Styles */
+            #message {
+                margin-top: 20px;
+                padding: 10px;
+                border-radius: 5px;
+                display: none;
+            }
 
-        /* Message Styles */
-        #message {
-            margin-top: 20px;
-            padding: 10px;
-            border-radius: 5px;
-            display: none;
-        }
+            #message.success {
+                background-color: #d4edda;
+                color: #155724;
+            }
 
-        #message.success {
-            background-color: #d4edda;
-            color: #155724;
-        }
+            #message.error {
+                background-color: #f8d7da;
+                color: #721c24;
+            }
 
-        #message.error {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
+            .errorMseg {
+                color: red;
+                font-size: 12px;
+            }
+        </style>
+    </head>
 
-
-
-        .errorMseg {
-            color: red;
-            font-size: 12px;
-        }
-    </style>
-</head>
-
-<body>
-    <div id="overlay">
-        <div id="logo-popup">
-            <img src="./images/PSUlogo.jpeg" height="250" width="290px" alt="logo" class="logo">
+    <body>
+        <div id="overlay">
+            <div id="logo-popup">
+                <img
+                    src="./images/PSUlogo.jpeg"
+                    height="250"
+                    width="290px"
+                    alt="logo"
+                    class="logo"
+                />
+            </div>
         </div>
-    </div>
 
-    <div class="container">
-        <div class="Login_form">
-            <h1 id="FormHead">User Registration</h1>
+        <div class="container">
+            <div class="Login_form">
+                <h1 id="FormHead">User Registration</h1>
 
-            <!-- Message Section -->
-            <div id="message"></div>
+                <!-- Message Section -->
+                <div id="message"></div>
 
-            <form id="form" action="/user-signup" method="POST" onsubmit="return showPendingMessage(event)">
-                <div class="inputSet">
-                    <div class="inputFields" id="Username">
-                        <i class="fa-solid fa-user"></i>
-                        <i class="fa-regular fa-circle-check" id="correctNameIcon" style="display: none;"></i>
-                        <i class="fa-regular fa-circle-xmark" id="wrongNameIcon" style="display: none;"></i>
-                        <input type="text" name="name" placeholder="Full Name" id="name" onkeyup="nameValidation()"
-                            required><br><br>
-                        <span id="nameError" class="errorMseg"> </span>
+                <form
+                    id="form"
+                    action="/user-signup"
+                    method="POST"
+                    onsubmit="return showPendingMessage(event)"
+                >
+                    <div class="inputSet">
+                        <div class="inputFields" id="Username">
+                            <i class="fa-solid fa-user"></i>
+                            <i
+                                class="fa-regular fa-circle-check"
+                                id="correctNameIcon"
+                                style="display: none"
+                            ></i>
+                            <i
+                                class="fa-regular fa-circle-xmark"
+                                id="wrongNameIcon"
+                                style="display: none"
+                            ></i>
+                            <input
+                                type="text"
+                                name="name"
+                                placeholder="Full Name"
+                                id="name"
+                                onkeyup="nameValidation()"
+                                required
+                            /><br /><br />
+                            <span id="nameError" class="errorMseg"> </span>
+                        </div>
+
+                        <div class="inputFields" id="Email">
+                            <i class="fa-solid fa-envelope"></i>
+                            <i
+                                class="fa-regular fa-circle-check"
+                                id="correctEmailIcon"
+                                style="display: none"
+                            ></i>
+                            <i
+                                class="fa-regular fa-circle-xmark"
+                                id="wrongEmailIcon"
+                                style="display: none"
+                            ></i>
+                            <input
+                                type="email"
+                                name="email"
+                                placeholder="Email"
+                                id="email"
+                                onkeyup="emailValidation()"
+                                required
+                            /><br />
+                            <span id="emailError" class="errorMseg"></span>
+                        </div>
+
+                        <div class="inputFields" id="PhoneNum">
+                            <i class="fa-solid fa-phone"></i>
+                            <i
+                                class="fa-regular fa-circle-check"
+                                id="correctPhoneIcon"
+                                style="display: none"
+                            ></i>
+                            <i
+                                class="fa-regular fa-circle-xmark"
+                                id="wrongPhoneIcon"
+                                style="display: none"
+                            ></i>
+                            <input
+                                type="tel"
+                                name="phoneNum"
+                                placeholder="Phone Number"
+                                id="phoneNum"
+                                onkeyup="phoneValidation()"
+                                required
+                            /><br />
+                            <span id="phoneError" class="errorMseg"></span>
+                        </div>
+
+                        <div class="inputFields" id="Password">
+                            <i class="fa-solid fa-lock"></i>
+                            <i
+                                class="fa-regular fa-circle-check"
+                                id="correctPassIcon"
+                                style="display: none"
+                            ></i>
+                            <i
+                                class="fa-regular fa-circle-xmark"
+                                id="wrongPassIcon"
+                                style="display: none"
+                            ></i>
+                            <input
+                                type="password"
+                                name="password"
+                                placeholder="Password"
+                                id="password"
+                                onkeyup="passValidation()"
+                                required
+                            /><br />
+                            <span id="passwordError" class="errorMseg"></span>
+                        </div>
+
+                        <div class="inputFields" id="Password2">
+                            <i class="fa-solid fa-lock"></i>
+                            <i
+                                class="fa-regular fa-circle-check"
+                                id="correctConfirmIcon"
+                                style="display: none"
+                            ></i>
+                            <i
+                                class="fa-regular fa-circle-xmark"
+                                id="wrongConfirmIcon"
+                                style="display: none"
+                            ></i>
+                            <input
+                                type="password"
+                                name="password2"
+                                placeholder="Confirm Password"
+                                id="password2"
+                                onkeyup="passConfirmValidation()"
+                                required
+                            /><br />
+                            <span
+                                id="confirmationError"
+                                class="errorMseg"
+                            ></span>
+                        </div>
+
+                        <p style="display: block; margin: 20px">
+                            Already have an account?
+                            <a href="/login">Login here</a>
+                        </p>
+                        <p style="display: block; margin: 20px">
+                            Shop Owner?
+                            <a href="shopowner-signup.html"
+                                >Register as Shop Owner</a
+                            >
+                        </p>
+                        <p style="display: block; margin: 20px">
+                            Admin? <a href="adminLogin.html">Login here</a>
+                        </p>
                     </div>
+                    <br /><br /><br /><br /><br /><br />
 
-                    <div class="inputFields" id="Email">
-                        <i class="fa-solid fa-envelope"></i>
-                        <i class="fa-regular fa-circle-check" id="correctEmailIcon" style="display: none;"></i>
-                        <i class="fa-regular fa-circle-xmark" id="wrongEmailIcon" style="display: none;"></i>
-                        <input type="email" name="email" placeholder="Email" id="email" onkeyup="emailValidation()"
-                            required><br>
-                        <span id="emailError" class="errorMseg"></span>
+                    <div class="field_btn">
+                        <button type="submit" id="signup_btn">Register</button>
                     </div>
-
-                    <div class="inputFields" id="PhoneNum">
-                        <i class="fa-solid fa-phone"></i>
-                        <i class="fa-regular fa-circle-check" id="correctPhoneIcon" style="display: none;"></i>
-                        <i class="fa-regular fa-circle-xmark" id="wrongPhoneIcon" style="display: none;"></i>
-                        <input type="tel" name="phoneNum" placeholder="Phone Number" id="phoneNum"
-                            onkeyup="phoneValidation()" required><br>
-                        <span id="phoneError" class="errorMseg"></span>
-                    </div>
-
-                    <div class="inputFields" id="Password">
-                        <i class="fa-solid fa-lock"></i>
-                        <i class="fa-regular fa-circle-check" id="correctPassIcon" style="display: none;"></i>
-                        <i class="fa-regular fa-circle-xmark" id="wrongPassIcon" style="display: none;"></i>
-                        <input type="password" name="password" placeholder="Password" id="password"
-                            onkeyup="passValidation()" required><br>
-                        <span id="passwordError" class="errorMseg"></span>
-                    </div>
-
-                    <div class="inputFields" id="Password2">
-                        <i class="fa-solid fa-lock"></i>
-                        <i class="fa-regular fa-circle-check" id="correctConfirmIcon" style="display: none;"></i>
-                        <i class="fa-regular fa-circle-xmark" id="wrongConfirmIcon" style="display: none;"></i>
-                        <input type="password" name="password2" placeholder="Confirm Password" id="password2"
-                            onkeyup="passConfirmValidation()" required><br>
-                        <span id="confirmationError" class="errorMseg"></span>
-                    </div>
-
-                    <p style="display: block; margin: 20px;">Already have an account? <a href="/login">Login here</a>
-                    </p>
-                    <p style="display: block; margin: 20px;">Shop Owner? <a href="shopowner-signup.html">Register as
-                            Shop
-                            Owner</a></p>
-                    <p style="display: block; margin: 20px;">Admin? <a href="adminLogin.html">Login here</a></p>
-                </div>
-                <br><br><br><br><br>
-
-                <div class="field_btn">
-                    <button type="submit" id="signup_btn">Register</button>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
-    </div>
 
-    <script>
-        // Show the pending approval message
-        function showPendingMessage(event) {
-            event.preventDefault(); // Prevent the default form submission
-            const form = event.target;
+        <script>
+            // Show the pending approval message
+            function showPendingMessage(event) {
+                event.preventDefault(); // Prevent the default form submission
+                const form = event.target;
 
-            // Collect form data into JSON
-            const data = {
-                name: form.name.value.trim(),
-                email: form.email.value.trim(),
-                phoneNum: form.phoneNum.value.trim(),
-                password: form.password.value,
-                password2: form.password2.value
-            };
+                // Collect form data into JSON
+                const data = {
+                    name: form.name.value.trim(),
+                    email: form.email.value.trim(),
+                    phoneNum: form.phoneNum.value.trim(),
+                    password: form.password.value,
+                    password2: form.password2.value,
+                };
 
-            // Perform the form submission using Fetch API
-            fetch(form.action, {
-                method: form.method,
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(data), // Send data as JSON
-            })
-                .then(response => {
-                    // Check if response is OK (status in the range 200-299)
-                    if (!response.ok) {
-                        // Handle HTTP errors
-                        return response.json().then(errData => {
-                            throw new Error(errData.message || "Unknown error occurred.");
-                        });
-                    }
-                    return response.json(); // Parse JSON response
+                // Perform the form submission using Fetch API
+                fetch(form.action, {
+                    method: form.method,
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(data), // Send data as JSON
                 })
-                .then(data => {
-                    // Show the message
-                    const messageDiv = document.getElementById("message");
-                    messageDiv.textContent = data.message;
-                    if (data.success) {
-                        messageDiv.classList.remove("error");
-                        messageDiv.classList.add("success");
-                        messageDiv.style.display = "block";
-
-
-                    } else {
+                    .then((response) => {
+                        // Check if response is OK (status in the range 200-299)
+                        if (!response.ok) {
+                            // Handle HTTP errors
+                            return response.json().then((errData) => {
+                                throw new Error(
+                                    errData.message ||
+                                        "Unknown error occurred.",
+                                );
+                            });
+                        }
+                        return response.json(); // Parse JSON response
+                    })
+                    .then((data) => {
+                        // Show the message
+                        const messageDiv = document.getElementById("message");
+                        messageDiv.textContent = data.message;
+                        if (data.success) {
+                            messageDiv.classList.remove("error");
+                            messageDiv.classList.add("success");
+                            messageDiv.style.display = "block";
+                        } else {
+                            messageDiv.classList.remove("success");
+                            messageDiv.classList.add("error");
+                            messageDiv.style.display = "block";
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("Error:", error);
+                        const messageDiv = document.getElementById("message");
+                        messageDiv.textContent = error.message;
                         messageDiv.classList.remove("success");
                         messageDiv.classList.add("error");
                         messageDiv.style.display = "block";
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    const messageDiv = document.getElementById("message");
-                    messageDiv.textContent = error.message;
-                    messageDiv.classList.remove("success");
-                    messageDiv.classList.add("error");
-                    messageDiv.style.display = "block";
-                });
-        }
-
-
-    </script>
-    <script src="script.js"></script>
-</body>
-
+                    });
+            }
+        </script>
+        <script src="script.js"></script>
+    </body>
 </html>
