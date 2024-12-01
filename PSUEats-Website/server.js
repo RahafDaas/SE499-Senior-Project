@@ -12,7 +12,7 @@ const data = require("./data");
 // Set up storage configuration for multer
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "./uploads/"); // Directory where files will be saved
+    cb(null, "uploads/"); // Directory where files will be saved
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + path.extname(file.originalname)); // Append timestamp to filename
@@ -41,10 +41,7 @@ const MONGO_URI =
 // Middleware
 app.use(express.static(path.join(__dirname))); // Serve static files
 app.use(express.urlencoded({ extended: false })); // Parse form data
-app.use(
-  "/uploads",
-  express.static(path.join(__dirname, "PSUEats-Website/uploads")),
-);
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(express.json());
 
 // Connect to MongoDB
