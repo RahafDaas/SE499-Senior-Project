@@ -38,7 +38,8 @@ To ensure robust and efficient development, the PSUEats team used various techno
 
 These packages, along with the Agile Scrum framework, have enabled PSUEats to evolve incrementally, keeping the platform user-focused, secure, and scalable. With a modular, flexible tech stack, PSUEats is well-prepared to handle future growth and feature expansions.
 
-## Key Features of PSUEats
+## ⚠️ Deployment Notice
+The live deployment of PSUEats on Replit is currently inactive due to updated hosting limitations that require a paid plan for backend servers. However, the full project is open-source and can be easily cloned and run locally.
 
 ## Contributor's Github and Linked In accounts:
 
