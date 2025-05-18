@@ -43,7 +43,7 @@ The live deployment of PSUEats on Replit is currently inactive due to updated ho
 
 ## Contributor's Github and Linked In accounts:
 
-- [Rahaf Daas] (rhf4contact@gmail.com) (https://github.com/RahafDaas) (https://www.linkedin.com/in/rahafdaas/)
+- [Rahaf Sary] (rhf4contact@gmail.com) (https://github.com/RahafSary) (https://www.linkedin.com/in/rahafsary/)
 - [Somou Saidam] (220410081@psu.edu.sa) (https://github.com/SomouMS) (https://www.linkedin.com/in/somou-saidam-941b7b2a3/)
 - [Leen Al Roomi] (220410809@psu.edu.sa) (https://github.com/leenalroomi) (https://www.linkedin.com/in/leen-alroomi-140879267/)
 - [Raneem El Hajj] (Raneemelhajj10@gmail.com) (https://github.com/eng-Raneem-Haitham) (https://www.linkedin.com/in/raneem-elhajj-49318829b/)
